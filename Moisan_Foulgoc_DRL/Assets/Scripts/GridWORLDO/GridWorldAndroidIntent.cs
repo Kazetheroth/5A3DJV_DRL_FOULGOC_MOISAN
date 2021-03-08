@@ -1,24 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GridWORLDO
 {
     public class GameStateWithAction
     {
         public IGameState gameState;
-        public List<Intent> intents;
+        public Intent intent;
+
+        public Dictionary<Intent, int> intentProbability;
+
+        public IGameState GetNextState(List<IGameState> gameStates)
+        {
+            Vector3 position = gameState.GetPos();
+
+            switch (intent)
+            {
+                case Intent.WantToGoBot:
+                    position.z -= 1;
+                    break;
+                case Intent.WantToGoLeft:
+                    position.x -= 1;
+                    break;
+                case Intent.WantToGoRight:
+                    position.x += 1;
+                    break;
+                case Intent.WantToGoTop:
+                    position.z += 1;
+                    break;
+            }
+
+            return gameStates.Find(state =>
+            {
+                float epsilon = 0.00001f;
+                Vector3 statePos = state.GetPos();
+
+                return Math.Abs(statePos.x - position.x) < epsilon && Math.Abs(statePos.y - position.y) < epsilon;
+            });
+        }
     }
-    
+
     public class GridWorldAndroidIntent : IPlayerIntent
     {
         private List<GameStateWithAction> gameStateWithActions;
+        private List<IGameState> gameStates;
         private List<List<ICell>> worldCells;
         private IPlayer player;
         
         public GridWorldAndroidIntent(int maxX, int maxY, List<List<ICell>> cells, IPlayer player)
         {
             gameStateWithActions = new List<GameStateWithAction>();
+            gameStates = new List<IGameState>();
             InitIntent(maxX, maxY, cells, player);
         }
 
@@ -30,59 +65,42 @@ namespace GridWORLDO
                 {
                     GridWorldState gridWorldState = new GridWorldState();
                     gridWorldState.SetPos(new Vector3(i, 0, j));
-                    
-                    gridWorldState.SetValue(Random.Range(0, 100));
 
-                    List<Intent> intents = new List<Intent>();
+                    gridWorldState.SetValue(Random.Range(0, 100));
+                    gameStates.Add(gridWorldState);
+
                     player.SetCell(cells[i][j]);
-                    
-                    for (int k = 0; k < 5; ++k)
+
+                    int move;
+                    bool canMove = false;
+                    do
                     {
-                        int move;
-                        bool canMove = false;
-                        do
+                        move = Random.Range(1, 5);
+                        switch ((Intent) move)
                         {
-                            move = Random.Range(1, 5);
-                            switch ((Intent) move)
-                            {
-                                case Intent.WantToGoTop:
-                                    canMove = (bool) player?.WantToGoTop(cells);
-                                    if (canMove)
-                                    {
-                                        player.SetCell(cells[i][j+1]);
-                                    }
-                                    break;
-                                case Intent.WantToGoBot:
-                                    canMove = (bool) player?.WantToGoBot(cells);
-                                    if (canMove)
-                                    {
-                                        player.SetCell(cells[i][j-1]);
-                                    }
-                                    break;
-                                case Intent.WantToGoLeft:
-                                    canMove = (bool) player?.WantToGoLeft(cells);
-                                    if (canMove)
-                                    {
-                                        player.SetCell(cells[i-1][j]);
-                                    }
-                                    break;
-                                case Intent.WantToGoRight:
-                                    canMove = (bool) player?.WantToGoRight(cells);
-                                    if (canMove)
-                                    {
-                                        player.SetCell(cells[i+1][j]);
-                                    }
-                                    break;
-                            }
-                        } while (!canMove);
-                        intents.Add((Intent) move);
-                        
-                    }
+                            case Intent.WantToGoTop:
+                                canMove = (bool) player?.WantToGoTop(cells);
+                                break;
+                            case Intent.WantToGoBot:
+                                canMove = (bool) player?.WantToGoBot(cells);
+                                break;
+                            case Intent.WantToGoLeft:
+                                canMove = (bool) player?.WantToGoLeft(cells);
+                                break;
+                            case Intent.WantToGoRight:
+                                canMove = (bool) player?.WantToGoRight(cells);
+                                break;
+                        }
+                    } while (!canMove);
+
+                    Dictionary<Intent, int> intentByProba = new Dictionary<Intent, int>();
+                    intentByProba.Add((Intent) move, 100);
 
                     gameStateWithActions.Add(new GameStateWithAction
                     {
-                        intents = intents,
-                        gameState = gridWorldState
+                        intent = (Intent) move,
+                        gameState = gridWorldState,
+                        intentProbability = intentByProba
                     });
                 }
             }
@@ -91,11 +109,29 @@ namespace GridWORLDO
         public void EvaluationPolicy()
         {
             float delta = 0;
+            float gamma = 0.8f;
+            float tetha = 0.1f;
 
-            foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
+            while (delta < tetha)
             {
-                float temp = gameStateWithAction.gameState.GetValue();
-                
+                foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
+                {
+                    float temp = gameStateWithAction.gameState.GetValue();
+
+                    float newValue = 0;
+                    foreach (KeyValuePair<Intent, int> intentProb in gameStateWithAction.intentProbability)
+                    {
+                        IGameState nextGameState = gameStateWithAction.GetNextState(gameStates);
+                        
+                        float nextReward = worldCells[(int) nextGameState.GetPos().x][(int) nextGameState.GetPos().y].GetReward(); 
+                        newValue = 1 * nextReward * (gamma * nextGameState.GetValue());
+                    }
+
+
+                    gameStateWithAction.gameState.SetValue(newValue);
+
+                    delta = Math.Max(delta, temp - gameStateWithAction.gameState.GetValue());
+                }
             }
         }
         
