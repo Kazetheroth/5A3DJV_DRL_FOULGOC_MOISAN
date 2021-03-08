@@ -13,11 +13,11 @@ namespace GridWORLDO
 
         public Dictionary<Intent, int> intentProbability;
 
-        public IGameState GetNextState(List<IGameState> gameStates)
+        public IGameState GetNextState(List<IGameState> gameStates, Intent intentTrigger)
         {
             Vector3 position = gameState.GetPos();
 
-            switch (intent)
+            switch (intentTrigger)
             {
                 case Intent.WantToGoBot:
                     position.z -= 1;
@@ -54,6 +54,10 @@ namespace GridWORLDO
         {
             gameStateWithActions = new List<GameStateWithAction>();
             gameStates = new List<IGameState>();
+
+            worldCells = cells;
+            player = this.player;
+            
             InitIntent(maxX, maxY, cells, player);
         }
 
@@ -106,7 +110,7 @@ namespace GridWORLDO
             }
         }
 
-        public void EvaluationPolicy()
+        public void PolicyEvaluation()
         {
             float delta = 0;
             float gamma = 0.8f;
@@ -121,16 +125,41 @@ namespace GridWORLDO
                     float newValue = 0;
                     foreach (KeyValuePair<Intent, int> intentProb in gameStateWithAction.intentProbability)
                     {
-                        IGameState nextGameState = gameStateWithAction.GetNextState(gameStates);
+                        IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, intentProb.Key);
                         
                         float nextReward = worldCells[(int) nextGameState.GetPos().x][(int) nextGameState.GetPos().y].GetReward(); 
-                        newValue = 1 * nextReward * (gamma * nextGameState.GetValue());
+                        newValue = intentProb.Value * nextReward * (gamma * nextGameState.GetValue());
                     }
-
 
                     gameStateWithAction.gameState.SetValue(newValue);
 
                     delta = Math.Max(delta, temp - gameStateWithAction.gameState.GetValue());
+                }
+            }
+        }
+
+        public void PolicyImprovement()
+        {
+            bool policyStable = true;
+            IPlayer fakePlayer = new GridWoldPlayer();
+
+            foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
+            {
+                Vector3 currentPos = gameStateWithAction.gameState.GetPos();
+                fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.z]);
+                
+                Intent intentToPlay = gameStateWithAction.intent;
+
+                int maxValue = 0;
+                Intent maxValueForIntent;
+                GameStateWithAction testingGameState;
+                
+                for (int i = 1; i < 5; ++i)
+                {
+                    if (fakePlayer.WantToGoBot(worldCells))
+                    {
+                        testingGameState = gameStateWithAction.GetNextState(gameStates, )
+                    }
                 }
             }
         }

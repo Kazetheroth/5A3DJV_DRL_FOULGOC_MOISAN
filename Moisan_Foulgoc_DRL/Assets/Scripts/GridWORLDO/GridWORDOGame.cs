@@ -86,18 +86,6 @@ namespace GridWORLDO
 
                 medhimemmerde += "\n";
             }
-            
-//            foreach (List<ICell> icellList in cells)
-//            {
-//                foreach (ICell cell in icellList)
-//                {
-//                    medhimemmerde += cell.GetReward() + " - ";
-////                    Vector3 pos = cell.GetPosition();
-////                    Debug.Log("Value for x : " + pos.x + " y : " + pos.z + " => " + cell.GetReward());
-//                }
-//
-//                medhimemmerde += "\n";
-//            }
 
             Debug.Log(medhimemmerde);
         }
