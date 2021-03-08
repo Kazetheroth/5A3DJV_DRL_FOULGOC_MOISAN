@@ -1,15 +1,25 @@
-﻿namespace Interfaces
+﻿using UnityEngine;
+
+namespace Interfaces
 {
     public enum CellType
     {
         Obstacle,
         Goal,
-        EndGoal
+        Empty,
+        EndGoal,
+        Player
     }
 
     public interface ICell
     {
-        
         CellType WhenInteract();
+
+        void SetCellType(CellType cellType);
+        CellType GetCellType();
+
+        void SetReward(float reward);
+
+        Vector3 GetPosition();
     }
 }
