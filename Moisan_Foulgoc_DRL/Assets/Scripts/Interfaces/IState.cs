@@ -2,9 +2,9 @@
 
 namespace Interfaces
 {
-    public class IState
+    public interface IState
     {
-        public ICell Cell;
-        public List<IState> NextStates;
+        ICell GetCell();
+        List<IState> GetNextStates();
     }
 }

@@ -20,7 +20,7 @@ namespace GridWORLDO
         {
             return cellType;
         }
-
+        
         public void SetCellType(CellType cellType)
         {
             this.cellType = cellType;
@@ -35,7 +35,7 @@ namespace GridWORLDO
         {
             this.reward = reward;
         }
-
+        
         public Vector3 GetPosition()
         {
             return position;

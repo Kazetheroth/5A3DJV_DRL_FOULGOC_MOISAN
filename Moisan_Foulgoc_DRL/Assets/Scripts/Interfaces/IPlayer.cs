@@ -1,14 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using GridWORLDO;
+using UnityEngine;
 
 namespace Interfaces
 {
-    public class IPlayer
+    public interface IPlayer
     {
-        public bool WantToGoTop;
-        public bool WantToGoBot;
-        public bool WantToGoLeft;
-        public bool WantToGoRight;
-
-        public IState PlayerState;
+        bool WantToGoTop(List<List<ICell>> worldCells);
+        bool WantToGoBot(List<List<ICell>> worldCells);
+        bool WantToGoLeft(List<List<ICell>> worldCells);
+        bool WantToGoRight(List<List<ICell>> worldCells);
     }
 }
