@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
 using static Controller;
+using Random = UnityEngine.Random;
 
 namespace GridWORLDO
 {
@@ -25,10 +27,12 @@ namespace GridWORLDO
                 
                 for (int j = 0; j < MAX_CELLS_PER_COLUMN; ++j)
                 {
+                    CellType type = Random.Range(0, 10) > 8 ? CellType.Obstacle : CellType.Empty;
+                    
                     cellsPerLine.Add(new GridWorldCell(
                         new Vector3(i, 0, j),
-                        Random.Range(0, 10) > 8 ? CellType.Obstacle : CellType.Empty, 
-                        1));
+                        type, 
+                        type == CellType.Empty ? 0 : -1000));
                 }
 
                 cells.Add(cellsPerLine);
@@ -38,7 +42,15 @@ namespace GridWORLDO
             int yGoal = Random.Range(0, MAX_CELLS_PER_COLUMN);
 
             cells[xGoal][yGoal].SetCellType(CellType.EndGoal);
-            cells[xGoal][yGoal].SetReward(100000);
+            
+            if (isHuman)
+            {
+                playerIntent = new GridWorldIntent();
+            }
+            else
+            {
+                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN);
+            }
 
             int xPlayer = 0;
             int yPlayer = 0;
@@ -55,16 +67,128 @@ namespace GridWORLDO
             player = new GridWoldPlayer();
             player.SetCell(cells[xPlayer][yPlayer]);
 
-            if (isHuman)
+            SetInitialReward(xGoal, yGoal);
+            PrintArray();
+
+            return true;
+        }
+
+        private void PrintArray()
+        {
+            string medhimemmerde = "";
+
+            for (int i = MAX_CELLS_PER_LINE - 1; i >= 0; --i)
             {
-                playerIntent = new GridWorldIntent();
+                for (int j = 0; j < MAX_CELLS_PER_COLUMN; ++j)
+                {
+                    medhimemmerde += cells[j][i].GetReward() + "\t";
+                }
+
+                medhimemmerde += "\n";
+            }
+            
+//            foreach (List<ICell> icellList in cells)
+//            {
+//                foreach (ICell cell in icellList)
+//                {
+//                    medhimemmerde += cell.GetReward() + " - ";
+////                    Vector3 pos = cell.GetPosition();
+////                    Debug.Log("Value for x : " + pos.x + " y : " + pos.z + " => " + cell.GetReward());
+//                }
+//
+//                medhimemmerde += "\n";
+//            }
+
+            Debug.Log(medhimemmerde);
+        }
+
+        private void SetInitialReward(int xGoal, int yGoal)
+        {
+            cells[xGoal][yGoal].SetReward(1000);
+
+            int x = xGoal;
+            int y = yGoal;
+            bool wantToGoParse = false;
+            
+            float  newReward;
+            
+            if (x - 1 < 0 && y + 1 < MAX_CELLS_PER_COLUMN)
+            {
+                x = MAX_CELLS_PER_LINE - 1;
+                y = y + 1;
+                wantToGoParse = true;
+            } else if (x - 1 >= 0)
+            {
+                x = x - 1;
+                wantToGoParse = true;
+            }
+
+            newReward = 1000 - Math.Abs(xGoal - x) - Math.Abs(yGoal - y);
+            if (wantToGoParse)
+            {
+                SetRewardRecursif(x, y,xGoal, yGoal, newReward, true);
+            }
+            
+            x = xGoal;
+            y = yGoal;
+            wantToGoParse = false;
+
+            if (x + 1 > MAX_CELLS_PER_LINE - 1 && y - 1 >= 0)
+            {
+                x = 0;
+                y = y - 1;
+                wantToGoParse = true;
+            } else if (x + 1 <= MAX_CELLS_PER_LINE - 1)
+            {
+                x = x + 1;
+                wantToGoParse = true;
+            }
+
+            newReward = 1000 - Math.Abs(xGoal - x) - Math.Abs(yGoal - y);
+            Debug.Log(newReward);
+            if (wantToGoParse)
+            {
+                SetRewardRecursif(x, y,xGoal, yGoal, newReward, false);
+            }
+        }
+
+        private void SetRewardRecursif(int x, int y, int endX, int endY, float reward, bool goLeft)
+        {
+            cells[x][y].SetReward(reward + cells[x][y].GetReward());
+
+            if (goLeft)
+            {
+                if (x - 1 < 0 && y + 1 < MAX_CELLS_PER_COLUMN)
+                {
+                    x = MAX_CELLS_PER_LINE - 1;
+                    y = y + 1;
+                } else if (x - 1 >= 0)
+                {
+                    x = x - 1;
+                }
+                else
+                {
+                    return;
+                }
             }
             else
             {
-                playerIntent = new GridWorldAndroidIntent();
+                if (x + 1 > MAX_CELLS_PER_LINE - 1 && y - 1 >= 0)
+                {
+                    x = 0;
+                    y = y - 1;
+                } else if (x + 1 <= MAX_CELLS_PER_LINE - 1)
+                {
+                    x = x + 1;
+                }
+                else
+                {
+                    return;
+                }
             }
 
-            return true;
+            float newReward = 1000 - Math.Abs(endX - x) - Math.Abs(endY - y);
+            SetRewardRecursif(x, y, endX, endY, newReward, goLeft);
         }
 
         public List<List<ICell>> GetCells()

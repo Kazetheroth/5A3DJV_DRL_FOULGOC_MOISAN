@@ -1,20 +1,32 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
+using UnityEngine;
 
 namespace GridWORLDO
 {
-    public class GridWorldState : IState
+    public class GridWorldState : IGameState
     {
-        public GridWorldCell StateCell { set; get; }
-        public List<IState> NextStates { set; get; }
-        public ICell GetCell()
+        private Vector3 position;
+        private float value;
+
+        public void SetPos(Vector3 pos)
         {
-            return StateCell;
+            position = pos;
         }
 
-        public List<IState> GetNextStates()
+        public Vector3 GetPos()
         {
-            return NextStates;
+            return position;
+        }
+
+        public float GetValue()
+        {
+            return value;
+        }
+
+        public void SetValue(float value)
+        {
+            this.value = value;
         }
     }
 }

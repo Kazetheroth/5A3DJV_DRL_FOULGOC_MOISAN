@@ -19,6 +19,7 @@ namespace Interfaces
         CellType GetCellType();
 
         void SetReward(float reward);
+        float GetReward();
         Vector3 GetPosition();
     }
 }
