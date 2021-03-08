@@ -1,4 +1,5 @@
-﻿using Interfaces;
+﻿using System.Collections.Generic;
+using Interfaces;
 using UnityEngine;
 
 namespace GridWORLDO
@@ -28,6 +29,26 @@ namespace GridWORLDO
             }
 
             return Intent.Nothing;
+        }
+
+        public IPlayer GetPlayer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetPlayer(IPlayer player)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<List<ICell>> GetWorldCells()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetWorldCells(List<List<ICell>> worldCells)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

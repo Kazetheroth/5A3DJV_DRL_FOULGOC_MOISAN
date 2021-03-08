@@ -42,15 +42,6 @@ namespace GridWORLDO
             int yGoal = Random.Range(0, MAX_CELLS_PER_COLUMN);
 
             cells[xGoal][yGoal].SetCellType(CellType.EndGoal);
-            
-            if (isHuman)
-            {
-                playerIntent = new GridWorldIntent();
-            }
-            else
-            {
-                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN);
-            }
 
             int xPlayer = 0;
             int yPlayer = 0;
@@ -69,6 +60,15 @@ namespace GridWORLDO
 
             SetInitialReward(xGoal, yGoal);
             PrintArray();
+            
+            if (isHuman)
+            {
+                playerIntent = new GridWorldIntent();
+            }
+            else
+            {
+                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN, cells, player);
+            }
 
             return true;
         }
