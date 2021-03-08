@@ -19,6 +19,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject endGoalPrefab;
 
+    public static GameObject currentPlayerObject;
     private IGame game;
 
     public void StartGame(GameType gameType)
@@ -43,6 +44,7 @@ public class Controller : MonoBehaviour
     private void Update()
     {
         game?.UpdateGame();
+
         if (Input.GetKeyDown(KeyCode.UpArrow)) 
             game?.GetPlayer().WantToGoTop(game?.GetCells());
         if (Input.GetKeyDown(KeyCode.DownArrow)) 
@@ -72,7 +74,7 @@ public class Controller : MonoBehaviour
                             instantiateGo.transform.position = cell.GetPosition();
                             break;
                         case CellType.Player:
-                            instantiateGo = Instantiate(playerPrefab, parentGeneratedScene.transform);
+                            currentPlayerObject = instantiateGo = Instantiate(playerPrefab, parentGeneratedScene.transform);
                             instantiateGo.transform.position = cell.GetPosition();
                             break;
                         case CellType.EndGoal:

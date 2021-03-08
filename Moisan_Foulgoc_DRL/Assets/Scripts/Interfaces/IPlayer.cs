@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using GridWORLDO;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Interfaces
 {
@@ -10,5 +12,10 @@ namespace Interfaces
         bool WantToGoBot(List<List<ICell>> worldCells);
         bool WantToGoLeft(List<List<ICell>> worldCells);
         bool WantToGoRight(List<List<ICell>> worldCells);
+
+        Vector3 GetPosition();
+
+        void SetCell(ICell cell);
+        ICell GetCell();
     }
 }

@@ -6,7 +6,7 @@ using static Controller;
 namespace GridWORLDO
 {
     public class GridWORDOGame : IGame
-    {
+    {   
         private IPlayer player;
 
         private List<List<ICell>> cells;
@@ -26,7 +26,7 @@ namespace GridWORLDO
                 {
                     cellsPerLine.Add(new GridWorldCell(
                         new Vector3(i, 0, j),
-                        Random.Range(0, 10) > 6 ? CellType.Obstacle : CellType.Empty, 
+                        Random.Range(0, 10) > 8 ? CellType.Obstacle : CellType.Empty, 
                         1));
                 }
 
@@ -51,6 +51,9 @@ namespace GridWORLDO
             cells[xPlayer][yPlayer].SetCellType(CellType.Player);
             cells[xPlayer][yPlayer].SetReward(0);
 
+            player = new GridWoldPlayer();
+            player.SetCell(cells[xPlayer][yPlayer]);
+
             return true;
         }
 
@@ -61,6 +64,8 @@ namespace GridWORLDO
 
         public bool UpdateGame()
         {
+            currentPlayerObject.transform.position = player.GetPosition();
+
             return true;
         }
 
