@@ -43,6 +43,14 @@ public class Controller : MonoBehaviour
     private void Update()
     {
         game?.UpdateGame();
+        if (Input.GetKeyDown(KeyCode.UpArrow)) 
+            game?.GetPlayer().WantToGoTop(game?.GetCells());
+        if (Input.GetKeyDown(KeyCode.DownArrow)) 
+            game?.GetPlayer().WantToGoBot(game?.GetCells());
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) 
+            game?.GetPlayer().WantToGoLeft(game?.GetCells());
+        if (Input.GetKeyDown(KeyCode.RightArrow)) 
+            game?.GetPlayer().WantToGoRight(game?.GetCells());
     }
 
     private void GenerateScene()

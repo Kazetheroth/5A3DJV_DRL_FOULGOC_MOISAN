@@ -68,5 +68,10 @@ namespace GridWORLDO
         {
             throw new System.NotImplementedException();
         }
+
+        public IPlayer GetPlayer()
+        {
+            return player;
+        }
     }
 }

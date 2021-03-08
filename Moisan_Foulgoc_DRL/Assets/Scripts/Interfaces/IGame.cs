@@ -9,6 +9,7 @@ namespace Interfaces
         bool UpdateGame();
         bool EndGame();
 
+        IPlayer GetPlayer();
         List<List<ICell>> GetCells();
     }
 }
