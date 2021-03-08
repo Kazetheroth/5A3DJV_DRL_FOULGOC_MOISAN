@@ -5,7 +5,7 @@ namespace Interfaces
 {
     public interface IGame
     {
-        bool InitGame();
+        bool InitGame(bool isHuman);
         bool UpdateGame();
         bool EndGame();
 

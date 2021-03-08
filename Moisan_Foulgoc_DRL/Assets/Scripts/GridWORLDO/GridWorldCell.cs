@@ -14,6 +14,7 @@ namespace GridWORLDO
         {
             position = pos;
             cellType = type;
+            this.reward = reward;
         }
 
         public CellType WhenInteract()

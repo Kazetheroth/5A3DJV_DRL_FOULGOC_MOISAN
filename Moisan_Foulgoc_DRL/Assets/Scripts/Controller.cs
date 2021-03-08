@@ -19,6 +19,11 @@ public class Controller : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject endGoalPrefab;
 
+    [HideInInspector]
+    public bool isHuman = true;
+    [HideInInspector]
+    public bool isAndroid;
+    
     public static GameObject currentPlayerObject;
     private IGame game;
 
@@ -37,7 +42,7 @@ public class Controller : MonoBehaviour
                 break;
         }
 
-        game.InitGame();
+        game.InitGame(isHuman);
         GenerateScene();
     }
 

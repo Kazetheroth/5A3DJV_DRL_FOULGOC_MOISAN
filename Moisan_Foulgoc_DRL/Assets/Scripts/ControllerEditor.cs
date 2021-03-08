@@ -12,6 +12,22 @@ public class ControllerEditor : Editor
 
         if (!Application.isPlaying) return;
 
+        EditorGUI.BeginChangeCheck();
+        controller.isHuman = EditorGUILayout.Toggle("Is human", controller.isHuman);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            controller.isAndroid = !controller.isHuman;
+        }
+        
+        EditorGUI.BeginChangeCheck();
+        controller.isAndroid = EditorGUILayout.Toggle("Is android", controller.isAndroid);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            controller.isHuman = !controller.isAndroid;
+        }
+        
         if (GUILayout.Button("Play GridWORLDO"))
         {
             controller.StartGame(Controller.GameType.GridWORLDO);
