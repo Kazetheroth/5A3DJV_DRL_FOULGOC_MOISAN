@@ -38,6 +38,8 @@ namespace GridWORLDO
 
             cells[xGoal][yGoal].SetCellType(CellType.EndGoal);
             cells[xGoal][yGoal].SetReward(1000);
+            
+            Debug.Log("goal " + xGoal + " " + yGoal);
 
             int xPlayer = 0;
             int yPlayer = 0;
@@ -64,6 +66,37 @@ namespace GridWORLDO
 
         public bool UpdateGame()
         {
+            bool isMoving = false;
+            
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                GetPlayer().WantToGoTop(GetCells());
+                isMoving = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                GetPlayer().WantToGoBot(GetCells());
+                isMoving = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                GetPlayer().WantToGoLeft(GetCells());
+                isMoving = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                GetPlayer().WantToGoRight(GetCells());
+                isMoving = true;
+            }
+
+            if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
+            {
+                EndGame();
+            }
+
             currentPlayerObject.transform.position = player.GetPosition();
 
             return true;
