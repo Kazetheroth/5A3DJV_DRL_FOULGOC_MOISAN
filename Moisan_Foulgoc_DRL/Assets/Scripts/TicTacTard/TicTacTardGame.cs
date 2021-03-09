@@ -3,7 +3,6 @@ using Interfaces;
 
 namespace TicTacTard
 {
-
     public class TicTacTardGame : IGame
     {
         private IPlayer player;
@@ -49,11 +48,6 @@ namespace TicTacTard
         }
 
         public List<List<ICell>> GetCells()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void InitIntent()
         {
             throw new System.NotImplementedException();
         }

@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour
 {
     public enum GameType
     {
+        Nothing,
         GridWORLDO,
         TicTacTard,
         Soooookolat,
@@ -35,12 +36,14 @@ public class Controller : MonoBehaviour
 
     public static Controller instance;
 
+    public static List<GameObject> debugObjects;
+
     private void Start()
     {
         instance = this;
     }
 
-    public void StartGame(GameType gameType)
+    public void InitGame(GameType gameType)
     {
         DestroyOldScene();
         
@@ -57,9 +60,15 @@ public class Controller : MonoBehaviour
                 break;
         }
 
-        game.InitGame(isHuman);
+        debugObjects = new List<GameObject>();
+        game?.InitGame();
         GenerateScene();
-        game.InitIntent();
+    }
+
+    public void StartGame()
+    {
+        ClearDebugObjects();
+        game.InitIntent(isHuman);   
     }
 
     public void DestroyOldScene()
@@ -77,6 +86,11 @@ public class Controller : MonoBehaviour
     public static void InstantiateArrowByIntent(Intent intent, int x, int y, float stateValue)
     {
         GameObject go = null;
+
+        if (!ControllerEditor.showArrow)
+        {
+            return;
+        }
         
         switch (intent)
         {
@@ -100,10 +114,24 @@ public class Controller : MonoBehaviour
         if (go)
         {
             go.transform.position = new Vector3(x, 1f, y);
-            go.transform.GetChild(0).GetComponent<TextMeshPro>().text = stateValue.ToString();
+
+            if (ControllerEditor.showStateValue)
+            {
+                go.transform.GetChild(0).GetComponent<TextMeshPro>().text = stateValue.ToString();
+            }
+
+            debugObjects.Add(go);
         }
     }
 
+    private void ClearDebugObjects()
+    {
+        foreach (GameObject go in debugObjects.ToArray())
+        {
+            Destroy(go);
+        }
+    }
+    
     private void Update()
     {
         game?.UpdateGame();
@@ -133,18 +161,20 @@ public class Controller : MonoBehaviour
                             currentPlayerObject = instantiateGo = Instantiate(playerPrefab, parentGeneratedScene.transform);
                             instantiateGo.transform.position = pos;
 
+                            pos.y -= 0.5f;
                             instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
                             instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;
                         case CellType.EndGoal:
                             instantiateGo = Instantiate(endGoalPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = new Vector3(cell.GetPosition().x, 0, cell.GetPosition().y);
+                            instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;
                         case CellType.Empty:
                             instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = new Vector3(cell.GetPosition().x, 0, cell.GetPosition().y);
+                            pos.y -= 0.5f;
+                            instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;
                     }

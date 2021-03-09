@@ -70,8 +70,6 @@ namespace GridWORLDO
             this.goalY = goalY;
             
             InitIntent(maxX, maxY, goalX, goalY, cells);
-
-            ComputePolicy();
         }
 
         private void ComputePolicy()
@@ -86,7 +84,6 @@ namespace GridWORLDO
             if (safeLoopIteration >= 5000)
             {
                 Debug.LogError("Safe loop iteration trigger, exit policyEvaluation");
-                return;
             }
         }
 
@@ -288,23 +285,27 @@ namespace GridWORLDO
         {
             IPlayer fakePlayer = new GridWoldPlayer();
 
-            foreach (IGameState gameState in gameStates)
-            {
-                gameState.SetValue(0);
-            }
-
-            float teta = 0.1f;
+            float tetha = 0.1f;
             float delta;
             float gamma = 0.8f;
 
+            int safeLoopIteration = 0;
+            
             do
             {
+                ++safeLoopIteration;
                 delta = 0;
 
                 foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
                 {
                     Vector2Int currentPos = gameStateWithAction.gameState.GetPos();
-                    fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.y]);
+                    ICell currentCell = worldCells[currentPos.x][currentPos.y]; 
+                    fakePlayer.SetCell(currentCell);
+
+                    if ((goalX == currentPos.x && goalY == currentPos.y) || currentCell.GetCellType() == CellType.Obstacle)
+                    {
+                        continue;
+                    }
 
                     float temp = gameStateWithAction.gameState.GetValue();
                     
@@ -317,7 +318,7 @@ namespace GridWORLDO
                             IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, (Intent) i);
                         
                             float nextReward = worldCells[nextGameState.GetPos().x][nextGameState.GetPos().y].GetReward(); 
-                            float tempValue = 1 * nextReward * (gamma * nextGameState.GetValue());
+                            float tempValue = 1 * nextReward + (gamma * nextGameState.GetValue());
 
                             if (tempValue > newValue)
                             {
@@ -330,12 +331,18 @@ namespace GridWORLDO
 
                     delta = Math.Max(delta, Math.Abs(temp - gameStateWithAction.gameState.GetValue()));
                 }
-            } while (delta < teta);
+            } while (delta >= tetha && safeLoopIteration < 5000);
+
+            if (safeLoopIteration >= 5000)
+            {
+                Debug.LogError("Safe loop iteration trigger, exit valueIteration");
+                return;
+            }
 
             foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
             {
                 Vector2Int currentPos = gameStateWithAction.gameState.GetPos();
-                fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.y]);
+                fakePlayer.SetCell(worldCells[currentPos.x][currentPos.y]);
 
                 gameStateWithAction.intent = GetIntentWithBestValue(gameStateWithAction, fakePlayer).intent;
             }
@@ -358,6 +365,17 @@ namespace GridWORLDO
 
         public void InitPlayerIntent()
         {
+            if (GridWORDOGame.chosenAlgo == GridWORDOGame.Algo.PolicyImprovement)
+            {
+                Debug.Log("==================== Compute Policy Improvement ====================");
+                ComputePolicy();
+            }
+            else
+            {
+                Debug.Log("==================== Compute Value Iteration ====================");
+                ValueIteration();
+            }
+
             PrintCellsPath();
         }
     }

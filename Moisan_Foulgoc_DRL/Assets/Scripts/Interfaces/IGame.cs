@@ -5,12 +5,12 @@ namespace Interfaces
 {
     public interface IGame
     {
-        bool InitGame(bool isHuman);
+        bool InitGame();
         bool UpdateGame();
         bool EndGame();
 
         IPlayer GetPlayer();
         List<List<ICell>> GetCells();
-        void InitIntent();
+        void InitIntent(bool isHuman);
     }
 }

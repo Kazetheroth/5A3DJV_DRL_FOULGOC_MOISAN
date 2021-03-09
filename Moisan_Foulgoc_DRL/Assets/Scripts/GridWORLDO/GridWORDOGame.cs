@@ -8,7 +8,14 @@ using Vector2Int = Utils.Vector2Int;
 namespace GridWORLDO
 {
     public class GridWORDOGame : IGame
-    {   
+    {
+        public enum Algo
+        {
+            ValueIteration,
+            PolicyImprovement
+        }
+        
+        public static Algo chosenAlgo;
         private IPlayer player;
         private IPlayerIntent playerIntent;
 
@@ -17,8 +24,14 @@ namespace GridWORLDO
         public const int MAX_CELLS_PER_LINE = 4;
         public const int MAX_CELLS_PER_COLUMN = 4;
 
-        public bool InitGame(bool isHuman)
+        public int xGoal;
+        public int yGoal;
+
+        private bool gameStart;
+
+        public bool InitGame()
         {
+            gameStart = false;
             cells = new List<List<ICell>>();
 
             for (int i = 0; i < MAX_CELLS_PER_LINE; ++i)
@@ -38,8 +51,8 @@ namespace GridWORLDO
                 cells.Add(cellsPerLine);
             }
 
-            int xGoal = Random.Range(0, MAX_CELLS_PER_LINE);
-            int yGoal = Random.Range(0, MAX_CELLS_PER_COLUMN);
+            xGoal = Random.Range(0, MAX_CELLS_PER_LINE);
+            yGoal = Random.Range(0, MAX_CELLS_PER_COLUMN);
 
             cells[xGoal][yGoal].SetCellType(CellType.EndGoal);
 
@@ -60,15 +73,6 @@ namespace GridWORLDO
 
             SetInitialReward(xGoal, yGoal);
             PrintArray();
-
-            if (isHuman)
-            {
-                playerIntent = new GridWorldIntent();
-            }
-            else
-            {
-                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN, xGoal, yGoal, cells);
-            }
 
             return true;
         }
@@ -119,9 +123,20 @@ namespace GridWORLDO
             return cells;
         }
 
-        public void InitIntent()
+        public void InitIntent(bool isHuman)
         {
+            if (isHuman)
+            {
+                playerIntent = new GridWorldIntent();
+            }
+            else
+            {
+                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN, xGoal, yGoal, cells);
+            }
+
             playerIntent.InitPlayerIntent();
+
+            gameStart = true;
         }
 
         public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent, bool saveNewPlayerCell = false)
@@ -149,6 +164,11 @@ namespace GridWORLDO
         
         public bool UpdateGame()
         {
+            if (!gameStart)
+            {
+                return false;
+            }
+            
             bool isMoving = CanMove(GetPlayer(), GetCells(), playerIntent.GetPlayerIntent(), true);
             
             if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
