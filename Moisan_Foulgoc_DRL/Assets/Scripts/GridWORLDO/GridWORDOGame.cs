@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interfaces;
+using UnityEditor;
 using UnityEngine;
 using static Controller;
 using Random = UnityEngine.Random;
@@ -184,27 +185,32 @@ namespace GridWORLDO
             return cells;
         }
 
-        public bool UpdateGame()
+        public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent)
         {
-            bool isMoving = false;
-
-            Intent intent = playerIntent.GetPlayerIntent();
-
+            bool canMove = true;
+            
             switch (intent)
             {
                 case Intent.WantToGoBot:
-                    isMoving = GetPlayer().WantToGoBot(GetCells());
+                    canMove = player.WantToGoBot(worldCells);
                     break;
                 case Intent.WantToGoLeft:
-                    isMoving = GetPlayer().WantToGoLeft(GetCells());
+                    canMove = player.WantToGoLeft(worldCells);
                     break;
                 case Intent.WantToGoTop:
-                    isMoving = GetPlayer().WantToGoTop(GetCells());
+                    canMove = player.WantToGoTop(worldCells);
                     break;
                 case Intent.WantToGoRight:
-                    isMoving = GetPlayer().WantToGoRight(GetCells());
+                    canMove = player.WantToGoRight(worldCells);
                     break;
             }
+
+            return canMove;
+        }
+        
+        public bool UpdateGame()
+        {
+            bool isMoving = CanMove(GetPlayer(), GetCells(), playerIntent.GetPlayerIntent());
 
             if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
             {

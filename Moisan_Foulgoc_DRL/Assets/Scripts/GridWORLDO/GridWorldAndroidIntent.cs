@@ -121,6 +121,8 @@ namespace GridWORLDO
             float delta = 0;
             float gamma = 0.8f;
             float tetha = 0.1f;
+            
+            
 
             while (delta < tetha)
             {
@@ -134,7 +136,7 @@ namespace GridWORLDO
                         IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, intentProb.Key);
                         
                         float nextReward = worldCells[(int) nextGameState.GetPos().x][(int) nextGameState.GetPos().y].GetReward(); 
-                        newValue = intentProb.Value * nextReward * (gamma * nextGameState.GetValue());
+                        newValue += intentProb.Value * nextReward * (gamma * nextGameState.GetValue());
                     }
 
                     gameStateWithAction.gameState.SetValue(newValue);
@@ -158,6 +160,7 @@ namespace GridWORLDO
 
                 int maxValue = 0;
                 Intent intentWithBestValue = GetIntentWithBestValue(gameStateWithAction, fakePlayer).intent;
+                gameStateWithAction.intent = intentWithBestValue;
 
                 if (intentToPlay != intentWithBestValue)
                 {
@@ -173,28 +176,12 @@ namespace GridWORLDO
 
         public IntentWithValueState GetIntentWithBestValue(GameStateWithAction gameStateWithAction, IPlayer fakePlayer)
         {
-            float maxValue = 0;
+            float maxValue = -5;
             Intent intentWithBestValue = Intent.Nothing;
             
             for (int i = 1; i < 5; ++i)
             {
-                bool canMove = false;
-                
-                switch ((Intent) i)
-                {
-                    case Intent.WantToGoBot:
-                        canMove = fakePlayer.WantToGoBot(worldCells);
-                        break;
-                    case Intent.WantToGoLeft:
-                        canMove = fakePlayer.WantToGoLeft(worldCells);
-                        break;
-                    case Intent.WantToGoRight:
-                        canMove = fakePlayer.WantToGoRight(worldCells);
-                        break;
-                    case Intent.WantToGoTop:
-                        canMove = fakePlayer.WantToGoTop(worldCells);
-                        break;
-                }
+                bool canMove = GridWORDOGame.CanMove(fakePlayer, worldCells, (Intent) i);
 
                 if (canMove)
                 {
@@ -204,7 +191,6 @@ namespace GridWORLDO
                     {
                         maxValue = gameState.GetValue();
                         intentWithBestValue = (Intent) i;
-
                     }
                 }
             }
@@ -227,6 +213,7 @@ namespace GridWORLDO
 
             float teta = 0.1f;
             float delta;
+            float gamma = 0.8f;
 
             do
             {
@@ -238,7 +225,26 @@ namespace GridWORLDO
                     fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.z]);
 
                     float temp = gameStateWithAction.gameState.GetValue();
-                    gameStateWithAction.gameState.SetValue(GetIntentWithBestValue(gameStateWithAction, fakePlayer).value);
+                    
+                    float newValue = 0;
+
+                    for (int i = 1; i < 5; ++i)
+                    {
+                        if (GridWORDOGame.CanMove(fakePlayer, worldCells, (Intent) i))
+                        {
+                            IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, (Intent) i);
+                        
+                            float nextReward = worldCells[(int) nextGameState.GetPos().x][(int) nextGameState.GetPos().y].GetReward(); 
+                            float tempValue = 1 * nextReward * (gamma * nextGameState.GetValue());
+
+                            if (tempValue > newValue)
+                            {
+                                newValue = tempValue;
+                            }
+                        }
+                    }
+
+                    gameStateWithAction.gameState.SetValue(newValue);
 
                     delta = Math.Max(delta, Math.Abs(temp - gameStateWithAction.gameState.GetValue()));
                 }
