@@ -11,8 +11,8 @@ namespace GridWORLDO
     {
         public enum Algo
         {
-            ValueIteration,
-            PolicyImprovement
+            PolicyImprovement,
+            ValueIteration
         }
         
         public static Algo chosenAlgo;
@@ -21,8 +21,8 @@ namespace GridWORLDO
 
         private List<List<ICell>> cells;
 
-        public const int MAX_CELLS_PER_LINE = 4;
-        public const int MAX_CELLS_PER_COLUMN = 4;
+        public const int MAX_CELLS_PER_LINE = 10;
+        public const int MAX_CELLS_PER_COLUMN = 10;
 
         public int xGoal;
         public int yGoal;
@@ -169,7 +169,11 @@ namespace GridWORLDO
                 return false;
             }
             
-            bool isMoving = CanMove(GetPlayer(), GetCells(), playerIntent.GetPlayerIntent(), true);
+            bool isMoving = CanMove(
+                GetPlayer(), 
+                GetCells(), 
+                playerIntent.GetPlayerIntent(player.GetPosition().x, player.GetPosition().y), 
+                true);
             
             if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
             {

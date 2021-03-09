@@ -5,7 +5,7 @@ namespace TicTacTard
 {
     public class TicTacTardPlayer : IPlayerIntent
     {
-        public Intent GetPlayerIntent()
+        public Intent GetPlayerIntent(int currentX, int currentY)
         {
             throw new System.NotImplementedException();
         }

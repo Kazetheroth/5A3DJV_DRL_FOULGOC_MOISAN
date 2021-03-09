@@ -12,12 +12,25 @@ public class ControllerEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
-        Controller controller = (Controller) target;
+        Controller controller = target as Controller;
 
         Color defaultColor = GUI.color;
 
-        if (!Application.isPlaying) return;
+        if (!Application.isPlaying)
+        {
+            controller.parentGeneratedScene = (GameObject) EditorGUILayout.ObjectField("parentGeneratedScene", controller.parentGeneratedScene, typeof(GameObject), true);
+
+            controller.wallPrefab = (GameObject) EditorGUILayout.ObjectField("wallPrefab", controller.wallPrefab, typeof(GameObject), false);
+            controller.playerPrefab = (GameObject) EditorGUILayout.ObjectField("playerPrefab", controller.playerPrefab, typeof(GameObject), false);
+            controller.endGoalPrefab = (GameObject) EditorGUILayout.ObjectField("endGoalPrefab", controller.endGoalPrefab, typeof(GameObject), false);
+            controller.groundCellPrefab = (GameObject) EditorGUILayout.ObjectField("groundCellPrefab", controller.groundCellPrefab, typeof(GameObject), false);
+            controller.planeRightArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeRightArrowPrefab", controller.planeRightArrowPrefab, typeof(GameObject), false);
+            controller.planeBotArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeBotArrowPrefab", controller.planeBotArrowPrefab, typeof(GameObject), false);
+            controller.planeTopArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeTopArrowPrefab", controller.planeTopArrowPrefab, typeof(GameObject), false);
+            controller.planeLeftArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeLeftArrowPrefab", controller.planeLeftArrowPrefab, typeof(GameObject), false);
+            controller.mainCamera = (GameObject) EditorGUILayout.ObjectField("camera", controller.mainCamera, typeof(GameObject), true);
+            return;
+        }
 
         GUI.color = Color.blue;
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);

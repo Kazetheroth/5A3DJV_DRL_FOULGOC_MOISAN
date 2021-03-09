@@ -347,9 +347,19 @@ namespace GridWORLDO
                 gameStateWithAction.intent = GetIntentWithBestValue(gameStateWithAction, fakePlayer).intent;
             }
         }
-        
-        public Intent GetPlayerIntent()
+
+        private GameStateWithAction GetGameStateByCurrentPosition(int currentX, int currentY)
         {
+            return gameStateWithActions.Find(action => action.gameState.GetPos().x == currentX && action.gameState.GetPos().y == currentY);
+        }
+        
+        public Intent GetPlayerIntent(int currentX, int currentY)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                return GetGameStateByCurrentPosition(currentX, currentY).intent;
+            }
+            
             return Intent.Nothing;
         }
 

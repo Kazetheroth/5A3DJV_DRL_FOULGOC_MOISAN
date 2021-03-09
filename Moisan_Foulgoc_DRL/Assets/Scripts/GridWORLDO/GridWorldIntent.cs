@@ -6,7 +6,7 @@ namespace GridWORLDO
 {
     public class GridWorldIntent : IPlayerIntent
     {
-        public Intent GetPlayerIntent()
+        public Intent GetPlayerIntent(int currentX, int currentY)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
