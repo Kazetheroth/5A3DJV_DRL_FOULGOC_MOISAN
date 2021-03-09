@@ -12,6 +12,7 @@ namespace TicTacTard
         private List<List<ICell>> cellsGame;
         private const int MAX_CELLS_PER_LINE = 3;
         private const int MAX_CELLS_PER_COLUMN = 3;
+        
         public bool InitGame(bool isHuman)
         {
             cellsGame = new List<List<ICell>>();
@@ -25,6 +26,11 @@ namespace TicTacTard
             }
             
             return true;
+        }
+        
+        public bool CheckVictory()
+        {
+            return false;
         }
 
         public bool UpdateGame()
@@ -43,6 +49,11 @@ namespace TicTacTard
         }
 
         public List<List<ICell>> GetCells()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void InitIntent()
         {
             throw new System.NotImplementedException();
         }

@@ -29,5 +29,10 @@ namespace TicTacTard
         {
             throw new System.NotImplementedException();
         }
+
+        public void InitPlayerIntent()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

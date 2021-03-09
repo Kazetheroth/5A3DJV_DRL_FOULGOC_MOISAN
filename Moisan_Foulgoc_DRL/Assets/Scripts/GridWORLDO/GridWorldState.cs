@@ -29,6 +29,16 @@ namespace GridWORLDO
             this.value = value;
         }
 
+        List<List<ICell>> IGameState.GetCells()
+        {
+            return GetCells();
+        }
+
+        void IGameState.SetCells(List<List<ICell>> cells)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public List<List<ICell>> GetCells()
         {
             throw new System.NotImplementedException();

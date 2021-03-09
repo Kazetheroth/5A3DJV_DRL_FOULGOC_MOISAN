@@ -59,7 +59,8 @@ namespace Algorithms.MCTS
     public class MCTS
     {
         private const int WIN_SCORE = 10;
-        private const int MAX_PLAYS = 10000;
+        private const int MAX_PLAYS = 100;
+        
 
         public List<List<ICell>> FindNextMove(List<List<ICell>> grid)
         {

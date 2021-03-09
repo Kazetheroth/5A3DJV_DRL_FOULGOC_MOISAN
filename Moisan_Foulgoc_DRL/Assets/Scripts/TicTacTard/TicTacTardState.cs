@@ -1,23 +1,58 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
+using Vector2Int = Utils.Vector2Int;
 
 namespace TicTacTard
 {
     public class TicTacTardState : IGameState
     {
-        private List<List<ICell>> grid;
+
+        public float value;
+        public int reward;
+        
+        private List<List<TicTacTardGrid>> gridBoard;
         private float winScore;
         private int visits;
 
         public TicTacTardState()
         {
         }
-
-        public List<List<ICell>> Grid
+        
+        public int CheckVictory()
         {
-            get => grid;
-            set => grid = value;
+            if (gridBoard[0][0] == gridBoard[0][1] && gridBoard[0][1] == gridBoard[0][2])
+                return gridBoard[0][0].playerId;
+            
+            else if (gridBoard[1][0] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[1][2])
+                return gridBoard[1][0].playerId;
+            
+            else if (gridBoard[2][0] == gridBoard[2][1] && gridBoard[2][1] == gridBoard[2][2])
+                return gridBoard[2][0].playerId;
+
+            else if (gridBoard[0][0] == gridBoard[1][0] && gridBoard[1][0] == gridBoard[2][0])
+                return gridBoard[0][0].playerId;
+            
+            else if (gridBoard[0][1] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][1])
+                return gridBoard[0][1].playerId;
+            
+            else if (gridBoard[0][2] == gridBoard[1][2] && gridBoard[1][2] == gridBoard[2][2])
+                return gridBoard[0][2].playerId;
+
+            else if (gridBoard[0][0] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][2])
+                return gridBoard[0][0].playerId;
+            
+            else if (gridBoard[0][2] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][0])
+                return gridBoard[0][2].playerId;
+            
+            else
+                return -1;
+        }
+
+        public List<List<TicTacTardGrid>> Grid
+        {
+            get => gridBoard;
+            set => gridBoard = value;
         }
 
         public float WinScore
@@ -32,6 +67,10 @@ namespace TicTacTard
             set => visits = value;
         }
 
+        
+        
+        
+        
         public List<TicTacTardState> GetAllPossibleStates()
         {
             throw new System.NotImplementedException();
@@ -42,6 +81,16 @@ namespace TicTacTard
         }
 
         public void SetPos(Vector3 pos)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetPos(Vector2Int pos)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        Vector2Int IGameState.GetPos()
         {
             throw new System.NotImplementedException();
         }
@@ -63,10 +112,15 @@ namespace TicTacTard
 
         public List<List<ICell>> GetCells()
         {
-            return Grid;
+            throw new System.NotImplementedException();
         }
 
         public void SetCells(List<List<ICell>> cells)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetCells(List<List<TicTacTardGrid>> cells)
         {
             Grid = cells;
         }

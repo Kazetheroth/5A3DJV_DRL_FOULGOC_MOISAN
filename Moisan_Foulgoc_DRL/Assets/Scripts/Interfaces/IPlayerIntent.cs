@@ -11,19 +11,6 @@ namespace Interfaces
         WantToGoBot
     }
 
-    public enum TicTacToeIntent
-    {
-        TopLeft,
-        TopCenter,
-        TopRight,
-        MidLeft,
-        MidCenter,
-        MidRight,
-        BotLeft,
-        BotCenter,
-        BotRight
-    }
-    
     public interface IPlayerIntent
     {
         Intent GetPlayerIntent();
