@@ -3,7 +3,6 @@ using Interfaces;
 
 namespace TicTacTard
 {
-
     public class TicTacTardGame : IGame
     {
         private IPlayer player;
@@ -12,7 +11,7 @@ namespace TicTacTard
         private List<List<ICell>> cellsGame;
         private const int MAX_CELLS_PER_LINE = 3;
         private const int MAX_CELLS_PER_COLUMN = 3;
-        public bool InitGame(bool isHuman)
+        public bool InitGame()
         {
             cellsGame = new List<List<ICell>>();
             List<ICell> cellsPerLine = new List<ICell>();
@@ -43,6 +42,11 @@ namespace TicTacTard
         }
 
         public List<List<ICell>> GetCells()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void InitIntent(bool isHuman)
         {
             throw new System.NotImplementedException();
         }
