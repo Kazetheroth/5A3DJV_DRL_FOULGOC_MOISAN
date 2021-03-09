@@ -9,5 +9,7 @@ namespace Interfaces
 
         float GetValue();
         void SetValue(float value);
+        List<List<ICell>> GetCells();
+        void SetCells(List<List<ICell>> cells);
     }
 }

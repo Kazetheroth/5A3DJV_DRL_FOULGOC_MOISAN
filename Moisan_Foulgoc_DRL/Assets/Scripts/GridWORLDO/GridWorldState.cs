@@ -28,5 +28,15 @@ namespace GridWORLDO
         {
             this.value = value;
         }
+
+        public List<List<ICell>> GetCells()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetCells(List<List<ICell>> cells)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
