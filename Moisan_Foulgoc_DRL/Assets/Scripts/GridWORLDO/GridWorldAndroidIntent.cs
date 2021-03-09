@@ -43,6 +43,12 @@ namespace GridWORLDO
         }
     }
 
+    public class IntentWithValueState
+    {
+        public float value;
+        public Intent intent;
+    }
+    
     public class GridWorldAndroidIntent : IPlayerIntent
     {
         private List<GameStateWithAction> gameStateWithActions;
@@ -133,7 +139,7 @@ namespace GridWORLDO
 
                     gameStateWithAction.gameState.SetValue(newValue);
 
-                    delta = Math.Max(delta, temp - gameStateWithAction.gameState.GetValue());
+                    delta = Math.Max(delta, Math.Abs(temp - gameStateWithAction.gameState.GetValue()));
                 }
             }
         }
@@ -151,7 +157,7 @@ namespace GridWORLDO
                 Intent intentToPlay = gameStateWithAction.intent;
 
                 int maxValue = 0;
-                Intent intentWithBestValue = GetIntentWithBestValue(gameStateWithAction, fakePlayer);
+                Intent intentWithBestValue = GetIntentWithBestValue(gameStateWithAction, fakePlayer).intent;
 
                 if (intentToPlay != intentWithBestValue)
                 {
@@ -165,7 +171,7 @@ namespace GridWORLDO
             }
         }
 
-        public Intent GetIntentWithBestValue(GameStateWithAction gameStateWithAction, IPlayer fakePlayer)
+        public IntentWithValueState GetIntentWithBestValue(GameStateWithAction gameStateWithAction, IPlayer fakePlayer)
         {
             float maxValue = 0;
             Intent intentWithBestValue = Intent.Nothing;
@@ -203,7 +209,48 @@ namespace GridWORLDO
                 }
             }
 
-            return intentWithBestValue;
+            return new IntentWithValueState
+            {
+                intent = intentWithBestValue,
+                value = maxValue
+            };
+        }
+
+        public void ValueIteration()
+        {
+            IPlayer fakePlayer = new GridWoldPlayer();
+
+            foreach (IGameState gameState in gameStates)
+            {
+                gameState.SetValue(0);
+            }
+
+            float teta = 0.1f;
+            float delta;
+
+            do
+            {
+                delta = 0;
+
+                foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
+                {
+                    Vector3 currentPos = gameStateWithAction.gameState.GetPos();
+                    fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.z]);
+
+                    float temp = gameStateWithAction.gameState.GetValue();
+                    gameStateWithAction.gameState.SetValue(GetIntentWithBestValue(gameStateWithAction, fakePlayer).value);
+
+                    delta = Math.Max(delta, Math.Abs(temp - gameStateWithAction.gameState.GetValue()));
+                }
+            } while (delta < teta);
+
+            foreach (GameStateWithAction gameStateWithAction in gameStateWithActions)
+            {
+                Vector3 currentPos = gameStateWithAction.gameState.GetPos();
+                fakePlayer.SetCell(worldCells[(int) currentPos.x][(int) currentPos.z]);
+
+                gameStateWithAction.intent = GetIntentWithBestValue(gameStateWithAction, fakePlayer).intent;
+            }
         }
         
         public Intent GetPlayerIntent()
