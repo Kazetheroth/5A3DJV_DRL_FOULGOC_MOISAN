@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Vector2Int = Utils.Vector2Int;
 
 namespace Interfaces
 {
@@ -20,6 +21,10 @@ namespace Interfaces
 
         void SetReward(float reward);
         float GetReward();
-        Vector3 GetPosition();
+        Vector2Int GetPosition();
+
+        GameObject GetCellGameObject();
+        void SetCellGameObject(GameObject gameObject);
+        void AddMaterialToCell(Material mat);
     }
 }

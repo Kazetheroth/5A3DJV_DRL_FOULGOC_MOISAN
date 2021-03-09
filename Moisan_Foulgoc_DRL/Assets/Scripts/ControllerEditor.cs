@@ -42,5 +42,10 @@ public class ControllerEditor : Editor
         {
             controller.StartGame(Controller.GameType.Soooookolat);
         }
+
+        if (GUILayout.Button("Clean scene"))
+        {
+            controller.DestroyOldScene();
+        }
     }
 }

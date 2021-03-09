@@ -50,5 +50,10 @@ namespace GridWORLDO
         {
             throw new System.NotImplementedException();
         }
+
+        public void InitPlayerIntent()
+        {
+            return;
+        }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interfaces;
-using UnityEditor;
 using UnityEngine;
-using static Controller;
 using Random = UnityEngine.Random;
+using Vector2Int = Utils.Vector2Int;
 
 namespace GridWORLDO
 {
@@ -15,8 +14,8 @@ namespace GridWORLDO
 
         private List<List<ICell>> cells;
 
-        private const int MAX_CELLS_PER_LINE = 4;
-        private const int MAX_CELLS_PER_COLUMN = 4;
+        public const int MAX_CELLS_PER_LINE = 4;
+        public const int MAX_CELLS_PER_COLUMN = 4;
 
         public bool InitGame(bool isHuman)
         {
@@ -31,9 +30,9 @@ namespace GridWORLDO
                     CellType type = Random.Range(0, 10) > 8 ? CellType.Obstacle : CellType.Empty;
                     
                     cellsPerLine.Add(new GridWorldCell(
-                        new Vector3(i, 0, j),
+                        new Vector2Int(i, j),
                         type, 
-                        type == CellType.Empty ? 0 : -1000));
+                        type == CellType.Empty ? -1 : -1000));
                 }
 
                 cells.Add(cellsPerLine);
@@ -61,14 +60,14 @@ namespace GridWORLDO
 
             SetInitialReward(xGoal, yGoal);
             PrintArray();
-            
+
             if (isHuman)
             {
                 playerIntent = new GridWorldIntent();
             }
             else
             {
-                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN, cells, player);
+                playerIntent = new GridWorldAndroidIntent(MAX_CELLS_PER_LINE, MAX_CELLS_PER_COLUMN, xGoal, yGoal, cells);
             }
 
             return true;
@@ -76,108 +75,43 @@ namespace GridWORLDO
 
         private void PrintArray()
         {
-            string medhimemmerde = "";
+            string medhitoutcourt = "";
 
             for (int i = MAX_CELLS_PER_LINE - 1; i >= 0; --i)
             {
                 for (int j = 0; j < MAX_CELLS_PER_COLUMN; ++j)
                 {
-                    medhimemmerde += cells[j][i].GetReward() + "\t";
+                    medhitoutcourt += cells[j][i].GetReward() + "\t";
                 }
 
-                medhimemmerde += "\n";
+                medhitoutcourt += "\n";
             }
 
-            Debug.Log(medhimemmerde);
+            Debug.Log(medhitoutcourt);
         }
 
         private void SetInitialReward(int xGoal, int yGoal)
         {
-            cells[xGoal][yGoal].SetReward(1000);
+            cells[xGoal][yGoal].SetReward(20);
 
-            int x = xGoal;
-            int y = yGoal;
-            bool wantToGoParse = false;
-            
-            float  newReward;
-            
-            if (x - 1 < 0 && y + 1 < MAX_CELLS_PER_COLUMN)
+            for (int i = 0; i < MAX_CELLS_PER_LINE; ++i)
             {
-                x = MAX_CELLS_PER_LINE - 1;
-                y = y + 1;
-                wantToGoParse = true;
-            } else if (x - 1 >= 0)
-            {
-                x = x - 1;
-                wantToGoParse = true;
-            }
-
-            newReward = 1000 - Math.Abs(xGoal - x) - Math.Abs(yGoal - y);
-            if (wantToGoParse)
-            {
-                SetRewardRecursif(x, y,xGoal, yGoal, newReward, true);
-            }
-            
-            x = xGoal;
-            y = yGoal;
-            wantToGoParse = false;
-
-            if (x + 1 > MAX_CELLS_PER_LINE - 1 && y - 1 >= 0)
-            {
-                x = 0;
-                y = y - 1;
-                wantToGoParse = true;
-            } else if (x + 1 <= MAX_CELLS_PER_LINE - 1)
-            {
-                x = x + 1;
-                wantToGoParse = true;
-            }
-
-            newReward = 1000 - Math.Abs(xGoal - x) - Math.Abs(yGoal - y);
-            Debug.Log(newReward);
-            if (wantToGoParse)
-            {
-                SetRewardRecursif(x, y,xGoal, yGoal, newReward, false);
-            }
-        }
-
-        private void SetRewardRecursif(int x, int y, int endX, int endY, float reward, bool goLeft)
-        {
-            cells[x][y].SetReward(reward + cells[x][y].GetReward());
-
-            if (goLeft)
-            {
-                if (x - 1 < 0 && y + 1 < MAX_CELLS_PER_COLUMN)
+                for (int j = 0; j < MAX_CELLS_PER_COLUMN; ++j)
                 {
-                    x = MAX_CELLS_PER_LINE - 1;
-                    y = y + 1;
-                } else if (x - 1 >= 0)
-                {
-                    x = x - 1;
-                }
-                else
-                {
-                    return;
+                    if (xGoal != i || yGoal != j)
+                    {
+                        if (cells[i][j].GetCellType() == CellType.Obstacle)
+                        {
+                            cells[i][j].SetReward(-1000);
+                        }
+                        else
+                        {
+                            // cells[i][j].SetReward(20 - (Math.Abs(xGoal - i) + Math.Abs(yGoal - j)));
+                            cells[i][j].SetReward(-1);
+                        }
+                    }
                 }
             }
-            else
-            {
-                if (x + 1 > MAX_CELLS_PER_LINE - 1 && y - 1 >= 0)
-                {
-                    x = 0;
-                    y = y - 1;
-                } else if (x + 1 <= MAX_CELLS_PER_LINE - 1)
-                {
-                    x = x + 1;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            float newReward = 1000 - Math.Abs(endX - x) - Math.Abs(endY - y);
-            SetRewardRecursif(x, y, endX, endY, newReward, goLeft);
         }
 
         public List<List<ICell>> GetCells()
@@ -185,23 +119,28 @@ namespace GridWORLDO
             return cells;
         }
 
-        public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent)
+        public void InitIntent()
         {
-            bool canMove = true;
-            
+            playerIntent.InitPlayerIntent();
+        }
+
+        public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent, bool saveNewPlayerCell = false)
+        {
+            bool canMove = false;
+
             switch (intent)
             {
                 case Intent.WantToGoBot:
-                    canMove = player.WantToGoBot(worldCells);
+                    canMove = player.WantToGoBot(worldCells, saveNewPlayerCell);
                     break;
                 case Intent.WantToGoLeft:
-                    canMove = player.WantToGoLeft(worldCells);
+                    canMove = player.WantToGoLeft(worldCells, saveNewPlayerCell);
                     break;
                 case Intent.WantToGoTop:
-                    canMove = player.WantToGoTop(worldCells);
+                    canMove = player.WantToGoTop(worldCells, saveNewPlayerCell);
                     break;
                 case Intent.WantToGoRight:
-                    canMove = player.WantToGoRight(worldCells);
+                    canMove = player.WantToGoRight(worldCells, saveNewPlayerCell);
                     break;
             }
 
@@ -210,21 +149,22 @@ namespace GridWORLDO
         
         public bool UpdateGame()
         {
-            bool isMoving = CanMove(GetPlayer(), GetCells(), playerIntent.GetPlayerIntent());
-
+            bool isMoving = CanMove(GetPlayer(), GetCells(), playerIntent.GetPlayerIntent(), true);
+            
             if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
             {
                 EndGame();
             }
 
-            currentPlayerObject.transform.position = player.GetPosition();
+            Controller.currentPlayerObject.transform.position = new Vector3(player.GetPosition().x, 0, player.GetPosition().y);
 
             return true;
         }
 
         public bool EndGame()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("You won");
+            return true;
         }
 
         public IPlayer GetPlayer()

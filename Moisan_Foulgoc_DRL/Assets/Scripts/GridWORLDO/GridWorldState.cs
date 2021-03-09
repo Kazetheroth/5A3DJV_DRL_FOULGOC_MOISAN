@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
-using UnityEngine;
+using Utils;
 
 namespace GridWORLDO
 {
     public class GridWorldState : IGameState
     {
-        private Vector3 position;
+        private Vector2Int position;
         private float value;
 
-        public void SetPos(Vector3 pos)
+        public void SetPos(Vector2Int pos)
         {
             position = pos;
         }
 
-        public Vector3 GetPos()
+        public Vector2Int GetPos()
         {
             return position;
         }

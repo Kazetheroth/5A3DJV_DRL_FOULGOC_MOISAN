@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using UnityEngine;
+using Vector2Int = Utils.Vector2Int;
 
 namespace GridWORLDO
 {
@@ -8,9 +9,11 @@ namespace GridWORLDO
         public float reward;
         public CellType cellType;
 
-        public Vector3 position;
+        public Vector2Int position;
 
-        public GridWorldCell(Vector3 pos, CellType type, float reward)
+        public GameObject gameObject;
+
+        public GridWorldCell(Vector2Int pos, CellType type, float reward)
         {
             position = pos;
             cellType = type;
@@ -37,9 +40,24 @@ namespace GridWORLDO
             this.reward = reward;
         }
         
-        public Vector3 GetPosition()
+        public Vector2Int GetPosition()
         {
             return position;
+        }
+
+        public GameObject GetCellGameObject()
+        {
+            return gameObject;
+        }
+
+        public void SetCellGameObject(GameObject gameObject)
+        {
+            this.gameObject = gameObject;
+        }
+
+        public void AddMaterialToCell(Material mat)
+        {
+            
         }
 
         public float GetReward()

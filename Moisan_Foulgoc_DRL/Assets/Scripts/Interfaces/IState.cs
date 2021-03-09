@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using Utils;
 
 namespace Interfaces
 {
     public interface IGameState
     {
-        void SetPos(Vector3 pos);
-        Vector3 GetPos();
+        void SetPos(Vector2Int pos);
+        Vector2Int GetPos();
 
         float GetValue();
         void SetValue(float value);
