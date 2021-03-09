@@ -28,7 +28,7 @@ namespace Algorithms.MCTS
         private Node parent;
         private List<Node> childs;
 
-        public Node(TicTacTardState state, Node parent, List<Node> childs)
+        public Node(IGameState state, Node parent, List<Node> childs)
         {
             this.state = state;
             this.parent = parent;

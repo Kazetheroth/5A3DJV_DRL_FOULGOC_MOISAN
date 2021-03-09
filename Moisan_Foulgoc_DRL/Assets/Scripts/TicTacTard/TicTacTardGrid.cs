@@ -9,7 +9,12 @@ namespace TicTacTard
         public float reward;
         public CellType CellType;
         public int playerId;
+        public Vector2Int position;
         
+        public Vector2Int GetPosition()
+        {
+            return position;
+        }
         
         public CellType WhenInteract()
         {
@@ -52,11 +57,6 @@ namespace TicTacTard
         }
 
         public void AddMaterialToCell(Material mat)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Vector3 GetPosition()
         {
             throw new System.NotImplementedException();
         }
