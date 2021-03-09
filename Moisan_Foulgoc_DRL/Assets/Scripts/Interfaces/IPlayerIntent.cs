@@ -26,7 +26,7 @@ namespace Interfaces
     
     public interface IPlayerIntent
     {
-        Intent GetPlayerIntent();
+        Intent GetPlayerIntent(int currentX, int currentY);
         List<List<ICell>> GetWorldCells();
         void SetWorldCells(List<List<ICell>> worldCells);
 

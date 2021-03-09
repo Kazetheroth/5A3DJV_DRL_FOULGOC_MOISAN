@@ -15,20 +15,19 @@ public class Controller : MonoBehaviour
         Soooookolat,
     }
 
-    [SerializeField] private GameObject parentGeneratedScene;
+    public GameObject parentGeneratedScene;
 
-    [SerializeField] private GameObject wallPrefab;
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private GameObject endGoalPrefab;
-    [SerializeField] private GameObject groundCellPrefab;
-    [SerializeField] public GameObject planeRightArrowPrefab;
-    [SerializeField] public GameObject planeBotArrowPrefab;
-    [SerializeField] public GameObject planeTopArrowPrefab;
-    [SerializeField] public GameObject planeLeftArrowPrefab;
+    public GameObject wallPrefab;
+    public GameObject playerPrefab;
+    public GameObject endGoalPrefab;
+    public GameObject groundCellPrefab;
+    public GameObject planeRightArrowPrefab;
+    public GameObject planeBotArrowPrefab;
+    public GameObject planeTopArrowPrefab;
+    public GameObject planeLeftArrowPrefab;
+    [SerializeField] public GameObject mainCamera;
 
-    [HideInInspector]
     public bool isHuman = true;
-    [HideInInspector]
     public bool isAndroid;
     
     public static GameObject currentPlayerObject;
@@ -57,6 +56,10 @@ public class Controller : MonoBehaviour
                 break;
             case GameType.GridWORLDO:
                 game = new GridWORDOGame();
+                Vector3 pos = mainCamera.transform.position;
+                pos.x = GridWORDOGame.MAX_CELLS_PER_LINE / 2;
+                pos.z = GridWORDOGame.MAX_CELLS_PER_COLUMN / 2;
+                mainCamera.transform.position = pos;
                 break;
         }
 
