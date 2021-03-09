@@ -15,16 +15,15 @@ public class Controller : MonoBehaviour
         Soooookolat,
     }
 
-    public GameObject parentGeneratedScene;
-
-    public GameObject wallPrefab;
-    public GameObject playerPrefab;
-    public GameObject endGoalPrefab;
-    public GameObject groundCellPrefab;
-    public GameObject planeRightArrowPrefab;
-    public GameObject planeBotArrowPrefab;
-    public GameObject planeTopArrowPrefab;
-    public GameObject planeLeftArrowPrefab;
+    [SerializeField] public GameObject parentGeneratedScene;
+    [SerializeField] public GameObject wallPrefab;
+    [SerializeField] public GameObject playerPrefab;
+    [SerializeField] public GameObject endGoalPrefab;
+    [SerializeField] public GameObject groundCellPrefab;
+    [SerializeField] public GameObject planeRightArrowPrefab;
+    [SerializeField] public GameObject planeBotArrowPrefab;
+    [SerializeField] public GameObject planeTopArrowPrefab;
+    [SerializeField] public GameObject planeLeftArrowPrefab;
     [SerializeField] public GameObject mainCamera;
 
     public bool isHuman = true;
