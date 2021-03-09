@@ -151,17 +151,59 @@ namespace GridWORLDO
                 Intent intentToPlay = gameStateWithAction.intent;
 
                 int maxValue = 0;
-                Intent maxValueForIntent;
-                GameStateWithAction testingGameState;
-                
-                for (int i = 1; i < 5; ++i)
+                Intent intentWithBestValue = GetIntentWithBestValue(gameStateWithAction, fakePlayer);
+
+                if (intentToPlay != intentWithBestValue)
                 {
-                    if (fakePlayer.WantToGoBot(worldCells))
+                    policyStable = false;
+                }
+            }
+
+            if (!policyStable)
+            {
+                PolicyEvaluation();
+            }
+        }
+
+        public Intent GetIntentWithBestValue(GameStateWithAction gameStateWithAction, IPlayer fakePlayer)
+        {
+            float maxValue = 0;
+            Intent intentWithBestValue = Intent.Nothing;
+            
+            for (int i = 1; i < 5; ++i)
+            {
+                bool canMove = false;
+                
+                switch ((Intent) i)
+                {
+                    case Intent.WantToGoBot:
+                        canMove = fakePlayer.WantToGoBot(worldCells);
+                        break;
+                    case Intent.WantToGoLeft:
+                        canMove = fakePlayer.WantToGoLeft(worldCells);
+                        break;
+                    case Intent.WantToGoRight:
+                        canMove = fakePlayer.WantToGoRight(worldCells);
+                        break;
+                    case Intent.WantToGoTop:
+                        canMove = fakePlayer.WantToGoTop(worldCells);
+                        break;
+                }
+
+                if (canMove)
+                {
+                    IGameState gameState = gameStateWithAction.GetNextState(gameStates, (Intent) i);
+
+                    if (maxValue < gameState.GetValue())
                     {
-                        testingGameState = gameStateWithAction.GetNextState(gameStates, )
+                        maxValue = gameState.GetValue();
+                        intentWithBestValue = (Intent) i;
+
                     }
                 }
             }
+
+            return intentWithBestValue;
         }
         
         public Intent GetPlayerIntent()
