@@ -1,12 +1,20 @@
 ﻿using System.Collections.Generic;
+using GridWORLDO;
 using Interfaces;
 
 namespace TicTacTard
 {
+    public enum TicTacTardGameType
+    {
+        HumanVHuman,
+        HumanVBot,
+        BotVBot
+    }
     public class TicTacTardGame : IGame
     {
-        private IPlayer player;
+        private List<IPlayer> player;
         private IPlayerIntent playerIntent;
+        private TicTacTardGameType gameType;
         
         private List<List<ICell>> cellsGame;
         private const int MAX_CELLS_PER_LINE = 3;
@@ -14,6 +22,17 @@ namespace TicTacTard
         
         public bool InitGame(bool isHuman)
         {
+            gameType = TicTacTardGameType.HumanVHuman;
+            switch (gameType)
+            {
+                case TicTacTardGameType.HumanVHuman:
+                    break;
+                case TicTacTardGameType.HumanVBot:
+                    break;
+                case TicTacTardGameType.BotVBot:
+                    break;
+            }
+            
             cellsGame = new List<List<ICell>>();
             List<ICell> cellsPerLine = new List<ICell>();
             for (int i = 0; i < MAX_CELLS_PER_LINE; i++)

@@ -1,26 +1,42 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
+using Utils;
 
 namespace TicTacTard
 {
-    public class TicTacTardPlayer : IPlayerIntent
+    public class TicTacTardPlayer : IPlayer
     {
-        public Intent GetPlayerIntent(int currentX, int currentY)
+        public bool WantToGoTop(List<List<ICell>> worldCells, bool setNewCell = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<List<ICell>> GetWorldCells()
+        public bool WantToGoBot(List<List<ICell>> worldCells, bool setNewCell = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public void SetWorldCells(List<List<ICell>> worldCells)
+        public bool WantToGoLeft(List<List<ICell>> worldCells, bool setNewCell = false)
         {
             throw new System.NotImplementedException();
         }
 
-        public void InitPlayerIntent()
+        public bool WantToGoRight(List<List<ICell>> worldCells, bool setNewCell = false)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Vector2Int GetPosition()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetCell(ICell cell)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ICell GetCell()
         {
             throw new System.NotImplementedException();
         }
