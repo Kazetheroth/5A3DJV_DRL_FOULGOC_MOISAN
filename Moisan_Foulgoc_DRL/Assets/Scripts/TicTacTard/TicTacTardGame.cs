@@ -26,10 +26,14 @@ namespace TicTacTard
         private const int MAX_CELLS_PER_LINE = 3;
         private const int MAX_CELLS_PER_COLUMN = 3;
 
+        private Intent lastIntent = Intent.Nothing;
+        private int nbActions = 0;
+        private bool playerWon = false;
+        
         public bool InitGame()
         {
             gameStart = false;
-            gameType = TicTacTardGameType.HumanVBot;
+            gameType = TicTacTardGameType.BotVBot;
             player = new List<IPlayer>();
 
             switch (gameType)
@@ -47,7 +51,7 @@ namespace TicTacTard
                 case TicTacTardGameType.BotVBot:
                     for (int i = 0; i < 2; i++)
                     {
-                        player.Add(new TicTacTardPlayer(i, i.ToString()));
+                        player.Add(new TicTacTardAndroid(i, i.ToString()));
                     }
                     break;
             }
@@ -70,8 +74,6 @@ namespace TicTacTard
             return true;
         }
 
-        private Intent lastIntent = Intent.Nothing;
-
         public bool UpdateGame()
         {
             if (!gameStart)
@@ -87,15 +89,9 @@ namespace TicTacTard
             return true;
         }
 
-        private void CheckIntentValidity()
-        {
-            
-        }
-        
         public IEnumerator StartGame()
         {
             gameStart = true;
-            bool endGame = false;
 
             do
             {
@@ -106,7 +102,7 @@ namespace TicTacTard
 
                 bool changePlayer = PlayAction(lastIntent, currentPlayer.Token, true);
 
-                if (currentPlayer.playerWon)
+                if ((playerWon = currentPlayer.playerWon) || nbActions == 9)
                 {
                     break;
                 }
@@ -117,7 +113,7 @@ namespace TicTacTard
                 {
                     ChangePlayer();
                 }
-            } while (!endGame);
+            } while (true);
 
             EndGame();
         }
@@ -198,6 +194,7 @@ namespace TicTacTard
 
             if (currentCell?.token == "-1")
             {
+                nbActions++;
                 currentCell.token = token;
                 currentPlayer.IncrementScore(directions);
 
@@ -222,7 +219,15 @@ namespace TicTacTard
 
         public bool EndGame()
         {
-            Debug.Log("Someone won");
+            if (playerWon)
+            {
+                Debug.Log("Player with " + currentPlayer.Token + " won ");
+            }
+            else
+            {
+                Debug.Log("Draw");
+            }
+
             return true;
         }
 
