@@ -23,13 +23,15 @@ public class ControllerEditor : Editor
 
             controller.wallPrefab = (GameObject) EditorGUILayout.ObjectField("wallPrefab", controller.wallPrefab, typeof(GameObject), false);
             controller.playerPrefab = (GameObject) EditorGUILayout.ObjectField("playerPrefab", controller.playerPrefab, typeof(GameObject), false);
+            controller.goalPrefab = (GameObject) EditorGUILayout.ObjectField("goalPrefab", controller.goalPrefab, typeof(GameObject), false);
+            controller.boxPrefab = (GameObject) EditorGUILayout.ObjectField("boxPrefab", controller.boxPrefab, typeof(GameObject), false);
             controller.endGoalPrefab = (GameObject) EditorGUILayout.ObjectField("endGoalPrefab", controller.endGoalPrefab, typeof(GameObject), false);
             controller.groundCellPrefab = (GameObject) EditorGUILayout.ObjectField("groundCellPrefab", controller.groundCellPrefab, typeof(GameObject), false);
             controller.planeRightArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeRightArrowPrefab", controller.planeRightArrowPrefab, typeof(GameObject), false);
             controller.planeBotArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeBotArrowPrefab", controller.planeBotArrowPrefab, typeof(GameObject), false);
             controller.planeTopArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeTopArrowPrefab", controller.planeTopArrowPrefab, typeof(GameObject), false);
             controller.planeLeftArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeLeftArrowPrefab", controller.planeLeftArrowPrefab, typeof(GameObject), false);
-            controller.cellGrid = (GameObject) EditorGUILayout.ObjectField("cellGridPrefab", controller.cellGrid, typeof(GameObject), false);
+            controller.cellGrid = (GameObject) EditorGUILayout.ObjectField("cellGridPrefab", controller.cellGrid, typeof(GameObject), true);
             controller.mainCamera = (GameObject) EditorGUILayout.ObjectField("camera", controller.mainCamera, typeof(GameObject), true);
 
             if (EditorGUI.EndChangeCheck())
@@ -82,8 +84,8 @@ public class ControllerEditor : Editor
 
         if (GUILayout.Button("Play Soooookolat"))
         {
-            controller.InitGame(Controller.GameType.Soooookolat);
             gameSelected = Controller.GameType.Soooookolat;
+            controller.InitGame(Controller.GameType.Soooookolat);
         }
 
         if (gameSelected == Controller.GameType.Soooookolat)

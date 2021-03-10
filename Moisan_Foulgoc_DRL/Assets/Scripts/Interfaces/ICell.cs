@@ -7,6 +7,7 @@ namespace Interfaces
     {
         Obstacle,
         Goal,
+        Box,
         Empty,
         EndGoal,
         Player

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GridWORLDO;
 using Interfaces;
+using Soooookolat;
 using TicTacTard;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,8 @@ public class Controller : MonoBehaviour
     [SerializeField] public GameObject parentGeneratedScene;
     [SerializeField] public GameObject wallPrefab;
     [SerializeField] public GameObject playerPrefab;
+    [SerializeField] public GameObject boxPrefab;
+    [SerializeField] public GameObject goalPrefab;
     [SerializeField] public GameObject endGoalPrefab;
     [SerializeField] public GameObject groundCellPrefab;
     [SerializeField] public GameObject planeRightArrowPrefab;
@@ -46,18 +49,22 @@ public class Controller : MonoBehaviour
     public void InitGame(GameType gameType)
     {
         DestroyOldScene();
-        
+
+        Vector3 pos;
         switch (gameType)
         {
             case GameType.Soooookolat:
-//                game = new SoooookolatGame();
+                game = new SoooookolatGame();
+                pos = mainCamera.transform.position;
+                pos.z = 3.5f;
+                mainCamera.transform.position = pos;
                 break;
             case GameType.TicTacTard: 
                 game = new TicTacTardGame();
                 break;
             case GameType.GridWORLDO:
                 game = new GridWORDOGame();
-                Vector3 pos = mainCamera.transform.position;
+                pos = mainCamera.transform.position;
                 pos.x = GridWORDOGame.MAX_CELLS_PER_LINE / 2;
                 pos.z = GridWORDOGame.MAX_CELLS_PER_COLUMN / 2;
                 mainCamera.transform.position = pos;
@@ -176,24 +183,35 @@ public class Controller : MonoBehaviour
                             instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;
+                        case CellType.Goal:
+                            instantiateGo = Instantiate(goalPrefab, parentGeneratedScene.transform);
+                            instantiateGo.transform.position = pos;
+                            cell.SetCellGameObject(instantiateGo);
+                            break;
+                        case CellType.Box:
+                            instantiateGo = Instantiate(boxPrefab, parentGeneratedScene.transform);
+                            instantiateGo.transform.position = pos;
+                            cell.SetCellGameObject(instantiateGo);
+                            break;
                         case CellType.EndGoal:
                             instantiateGo = Instantiate(endGoalPrefab, parentGeneratedScene.transform);
                             instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;
                         case CellType.Empty:
-                            if (ControllerEditor.gameSelected == GameType.GridWORLDO)
-                            {
-                                instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
-                                pos.y -= 0.5f;
-                                instantiateGo.transform.position = pos;
-                                cell.SetCellGameObject(instantiateGo);
-                            } else if (ControllerEditor.gameSelected == GameType.TicTacTard)
+                            if (ControllerEditor.gameSelected == GameType.TicTacTard)
                             {
                                 instantiateGo = Instantiate(cellGrid, parentGeneratedScene.transform);
                                 pos.y -= 0.5f;
                                 instantiateGo.transform.position = pos;
                                 instantiateGo.name = $"GRID_{x}_{y}";
+                                cell.SetCellGameObject(instantiateGo);
+                            } 
+                            else
+                            {
+                                instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
+                                pos.y -= 0.5f;
+                                instantiateGo.transform.position = pos;
                                 cell.SetCellGameObject(instantiateGo);
                             }
                             break;
