@@ -11,7 +11,7 @@ namespace TicTacTard
         public float value;
         public int reward;
         
-        private List<List<TicTacTardGrid>> gridBoard;
+        private List<List<TicTacTardCell>> gridBoard;
         private float winScore;
         private int visits;
 
@@ -19,7 +19,7 @@ namespace TicTacTard
         {
         }
 
-        public List<List<TicTacTardGrid>> Grid
+        public List<List<TicTacTardCell>> Grid
         {
             get => gridBoard;
             set => gridBoard = value;
@@ -90,7 +90,7 @@ namespace TicTacTard
             throw new System.NotImplementedException();
         }
 
-        public void SetCells(List<List<TicTacTardGrid>> cells)
+        public void SetCells(List<List<TicTacTardCell>> cells)
         {
             Grid = cells;
         }

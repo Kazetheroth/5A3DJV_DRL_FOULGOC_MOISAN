@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
+using UnityEditor;
 using UnityEngine;
 using Vector2Int = Utils.Vector2Int;
 
@@ -25,12 +26,15 @@ namespace TicTacTard
 
         public Dictionary<Direction, int> scores;
 
-        public TicTacTardPlayer(int id, bool isHuman, string token)
+        public bool playerWon;
+
+        public TicTacTardPlayer(int id, string token)
         {
             this.id = id;
-            this.isHuman = isHuman;
             this.token = token;
 
+            isHuman = true;
+            playerWon = false;
             scores = new Dictionary<Direction, int>();
 
             for (int i = 0; i < 8; ++i)
@@ -39,9 +43,17 @@ namespace TicTacTard
             }
         }
 
-        public void IncrementScore(Direction dir)
+        public void IncrementScore(List<Direction> directions)
         {
-            scores[dir] += 1;
+            foreach (Direction dir in directions)
+            {
+                scores[dir] += 1;
+
+                if (scores[dir] == 3)
+                {
+                    playerWon = true;
+                }
+            }
         }
 
         public int ID
@@ -97,7 +109,7 @@ namespace TicTacTard
             throw new System.NotImplementedException();
         }
 
-        public Intent GetPlayerIntent(int currentX, int currentY)
+        public virtual Intent GetPlayerIntent(int currentX, int currentY)
         {
             Intent intentToPlay = Intent.Nothing;
             

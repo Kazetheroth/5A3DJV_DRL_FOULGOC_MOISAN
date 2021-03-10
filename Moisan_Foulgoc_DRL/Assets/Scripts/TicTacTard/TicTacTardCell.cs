@@ -4,18 +4,20 @@ using Vector2Int = Utils.Vector2Int;
 
 namespace TicTacTard
 {
-    public class TicTacTardGrid : ICell
+    public class TicTacTardCell : ICell
     {
         public float reward;
         public CellType CellType;
         public int playerId;
         public Vector2Int position;
         public GameObject gameObject;
+        public string token;
 
-        public TicTacTardGrid(Vector2Int position, CellType CellType)
+        public TicTacTardCell(Vector2Int position, CellType CellType)
         {
             this.position = position;
             this.CellType = CellType;
+            token = "-1";
         }
 
         public Vector2Int GetPosition()

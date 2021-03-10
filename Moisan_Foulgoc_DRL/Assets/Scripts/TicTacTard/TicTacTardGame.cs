@@ -29,7 +29,7 @@ namespace TicTacTard
         public bool InitGame()
         {
             gameStart = false;
-            gameType = TicTacTardGameType.HumanVHuman;
+            gameType = TicTacTardGameType.HumanVBot;
             player = new List<IPlayer>();
 
             switch (gameType)
@@ -37,17 +37,17 @@ namespace TicTacTard
                 case TicTacTardGameType.HumanVHuman:
                     for (int i = 0; i < 2; i++)
                     {
-                        player.Add(new TicTacTardPlayer(i, true, i.ToString()));
+                        player.Add(new TicTacTardPlayer(i, i.ToString()));
                     }
                     break;
                 case TicTacTardGameType.HumanVBot:
-                    player.Add(new TicTacTardPlayer(0, true, "0"));
-                    player.Add(new TicTacTardPlayer(1, false, "1"));
+                    player.Add(new TicTacTardPlayer(0, "0"));
+                    player.Add(new TicTacTardAndroid(1, "1"));
                     break;
                 case TicTacTardGameType.BotVBot:
                     for (int i = 0; i < 2; i++)
                     {
-                        player.Add(new TicTacTardPlayer(i, false, i.ToString()));
+                        player.Add(new TicTacTardPlayer(i, i.ToString()));
                     }
                     break;
             }
@@ -60,7 +60,7 @@ namespace TicTacTard
 
                 for (int j = 0; j < MAX_CELLS_PER_COLUMN; j++)
                 {
-                    cellsPerLine.Add(new TicTacTardGrid(new Vector2Int(i, j), CellType.Empty));
+                    cellsPerLine.Add(new TicTacTardCell(new Vector2Int(i, j), CellType.Empty));
                 }
 
                 cellsGame.Add(cellsPerLine);
@@ -86,11 +86,16 @@ namespace TicTacTard
 
             return true;
         }
+
+        private void CheckIntentValidity()
+        {
+            
+        }
         
         public IEnumerator StartGame()
         {
             gameStart = true;
-            int endToken = -1;
+            bool endGame = false;
 
             do
             {
@@ -99,126 +104,115 @@ namespace TicTacTard
                     yield return new WaitForSeconds(0.1f);
                 }
 
-                if (PlayAction(lastIntent, currentPlayer.Token, true))
+                bool changePlayer = PlayAction(lastIntent, currentPlayer.Token, true);
+
+                if (currentPlayer.playerWon)
                 {
                     break;
                 }
 
                 lastIntent = Intent.Nothing;
-                ChangePlayer();
-            } while (endToken == -1);
+
+                if (changePlayer)
+                {
+                    ChangePlayer();
+                }
+            } while (!endGame);
 
             EndGame();
         }
 
+        // return true if intent is correct
         private bool PlayAction(Intent intent, string token, bool updateAffichage)
         {
             Vector2Int vector2Int = new Vector2Int(0, 0);
             bool endGame = false;
-            
+            List<Direction> directions = new List<Direction>();
+
             switch (intent)
             {
                 case Intent.BotCenter:
                     vector2Int.x = 0;
                     vector2Int.y = 1;
-                    currentPlayer.IncrementScore(Direction.Line1);
-                    currentPlayer.IncrementScore(Direction.Column2);
-
-                    endGame = currentPlayer.scores[Direction.Column2] == 3 ||
-                              currentPlayer.scores[Direction.Line1] == 3;
+                    
+                    directions.Add(Direction.Line1);
+                    directions.Add(Direction.Column2);
                     break;
                 case Intent.BotLeft:
                     vector2Int.x = 0;
                     vector2Int.y = 0;
-                    currentPlayer.IncrementScore(Direction.Line1);
-                    currentPlayer.IncrementScore(Direction.Column1);
-                    currentPlayer.IncrementScore(Direction.Diagonal1);
-                    
-                    endGame = currentPlayer.scores[Direction.Column1] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal1] == 3 ||
-                              currentPlayer.scores[Direction.Line1] == 3;
+                    directions.Add(Direction.Line1);
+                    directions.Add(Direction.Column1);
+                    directions.Add(Direction.Diagonal1);
                     break;
                 case Intent.BotRight:
                     vector2Int.x = 0;
                     vector2Int.y = 2;
-                    currentPlayer.IncrementScore(Direction.Line1);
-                    currentPlayer.IncrementScore(Direction.Column3);
-                    currentPlayer.IncrementScore(Direction.Diagonal2);
-                    
-                    endGame = currentPlayer.scores[Direction.Column3] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal2] == 3 ||
-                              currentPlayer.scores[Direction.Line1] == 3;
+                    directions.Add(Direction.Line1);
+                    directions.Add(Direction.Column3);
+                    directions.Add(Direction.Diagonal2);
                     break;
                 case Intent.MidCenter:
                     vector2Int.x = 1;
                     vector2Int.y = 1;
-                    currentPlayer.IncrementScore(Direction.Line2);
-                    currentPlayer.IncrementScore(Direction.Column2);
-                    currentPlayer.IncrementScore(Direction.Diagonal1);
-                    currentPlayer.IncrementScore(Direction.Diagonal2);
-                    
-                    endGame = currentPlayer.scores[Direction.Column2] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal1] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal2] == 3 ||
-                              currentPlayer.scores[Direction.Line2] == 3;
+                    directions.Add(Direction.Line2);
+                    directions.Add(Direction.Column2);
+                    directions.Add(Direction.Diagonal1);
+                    directions.Add(Direction.Diagonal2);
                     break;
                 case Intent.MidLeft:
                     vector2Int.x = 1;
                     vector2Int.y = 0;
-                    currentPlayer.IncrementScore(Direction.Line2);
-                    currentPlayer.IncrementScore(Direction.Column1);
-                    
-                    endGame = currentPlayer.scores[Direction.Column1] == 3 ||
-                              currentPlayer.scores[Direction.Line2] == 3;
+                    directions.Add(Direction.Line2);
+                    directions.Add(Direction.Column1);
                     break;
                 case Intent.MidRight:
                     vector2Int.x = 1;
                     vector2Int.y = 2;
-                    currentPlayer.IncrementScore(Direction.Line2);
-                    currentPlayer.IncrementScore(Direction.Column3);
-                    
-                    endGame = currentPlayer.scores[Direction.Column3] == 3 ||
-                              currentPlayer.scores[Direction.Line2] == 3;
+                    directions.Add(Direction.Line2);
+                    directions.Add(Direction.Column3);
                     break;
                 case Intent.TopCenter:
                     vector2Int.x = 2;
                     vector2Int.y = 1;
-                    currentPlayer.IncrementScore(Direction.Line3);
-                    currentPlayer.IncrementScore(Direction.Column2);
-                    
-                    endGame = currentPlayer.scores[Direction.Column2] == 3 ||
-                              currentPlayer.scores[Direction.Line3] == 3;
+                    directions.Add(Direction.Line3);
+                    directions.Add(Direction.Column2);
                     break;
                 case Intent.TopLeft:
                     vector2Int.x = 2;
                     vector2Int.y = 0;
-                    currentPlayer.IncrementScore(Direction.Line3);
-                    currentPlayer.IncrementScore(Direction.Column1);
-                    currentPlayer.IncrementScore(Direction.Diagonal2);
-                    
-                    endGame = currentPlayer.scores[Direction.Column1] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal2] == 3 ||
-                              currentPlayer.scores[Direction.Line3] == 3;
+                    directions.Add(Direction.Line3);
+                    directions.Add(Direction.Column1);
+                    directions.Add(Direction.Diagonal2);
                     break;
                 case Intent.TopRight:
                     vector2Int.x = 2;
                     vector2Int.y = 2;
-                    currentPlayer.IncrementScore(Direction.Line3);
-                    currentPlayer.IncrementScore(Direction.Column3);
-                    currentPlayer.IncrementScore(Direction.Diagonal1);
-                    
-                    endGame = currentPlayer.scores[Direction.Column3] == 3 ||
-                              currentPlayer.scores[Direction.Diagonal1] == 3 ||
-                              currentPlayer.scores[Direction.Line3] == 3;
+                    directions.Add(Direction.Line3);
+                    directions.Add(Direction.Column3);
+                    directions.Add(Direction.Diagonal1);
                     break;
             }
 
-            if (updateAffichage)
+            TicTacTardCell currentCell = cellsGame[vector2Int.x][vector2Int.y] as TicTacTardCell;
+
+            if (currentCell?.token == "-1")
             {
-                cellsGame[vector2Int.x][vector2Int.y].GetCellGameObject().transform.GetChild(0).GetComponent<TextMeshPro>().text = token;
+                currentCell.token = token;
+                currentPlayer.IncrementScore(directions);
+
+                if (updateAffichage)
+                {
+                    currentCell.GetCellGameObject().transform.GetChild(0).GetComponent<TextMeshPro>().text = token;
+                }
+            }
+            else
+            {
+                Debug.Log("Token déjà placé");
+                return false;
             }
 
-            return endGame;
+            return true;
         }
 
         private void ChangePlayer()
