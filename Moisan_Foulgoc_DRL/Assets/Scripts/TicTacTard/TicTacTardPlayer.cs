@@ -1,20 +1,47 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
-using Utils;
+using UnityEngine;
+using Vector2Int = Utils.Vector2Int;
 
 namespace TicTacTard
 {
-    public class TicTacTardPlayer : IPlayer
+    public enum Direction
+    {
+        Line1,
+        Line2,
+        Line3,
+        Column1,
+        Column2,
+        Column3,
+        Diagonal1,
+        Diagonal2
+    }
+    
+    public class TicTacTardPlayer : IPlayer, IPlayerIntent
     {
         private int id;
         private bool isHuman;
         private string token;
+
+        public Dictionary<Direction, int> scores;
 
         public TicTacTardPlayer(int id, bool isHuman, string token)
         {
             this.id = id;
             this.isHuman = isHuman;
             this.token = token;
+
+            scores = new Dictionary<Direction, int>();
+
+            for (int i = 0; i < 8; ++i)
+            {
+                scores.Add((Direction) i, 0);
+            }
+        }
+
+        public void IncrementScore(Direction dir)
+        {
+            scores[dir] += 1;
         }
 
         public int ID
@@ -66,6 +93,80 @@ namespace TicTacTard
         }
 
         public ICell GetCell()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Intent GetPlayerIntent(int currentX, int currentY)
+        {
+            Intent intentToPlay = Intent.Nothing;
+            
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("Click");
+                RaycastHit hit;
+
+                Ray ray = GameObject.Find("Main Camera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit, 100.0f))
+                {
+                    if (hit.collider.name.Contains("GRID_"))
+                    {
+                        Vector2Int vector2Int = Vector2Int.ConvertStringToVector2Int(hit.collider.name);
+
+                        intentToPlay = ConvertVector2IntToIntent(vector2Int);
+                    }
+                }
+            }
+
+            return intentToPlay;
+        }
+
+        private Intent ConvertVector2IntToIntent(Vector2Int vector2Int)
+        {
+            Intent intent = Intent.Nothing;
+            
+            if (vector2Int.x == 0 && vector2Int.y == 0)
+            {
+                intent = Intent.BotLeft;
+            } else if (vector2Int.x == 0 && vector2Int.y == 1)
+            {
+                intent = Intent.BotCenter;
+            } else if (vector2Int.x == 0 && vector2Int.y == 2)
+            {
+                intent = Intent.BotRight;
+            } else if (vector2Int.x == 1 && vector2Int.y == 0)
+            {
+                intent = Intent.MidLeft;
+            } else if (vector2Int.x == 1 && vector2Int.y == 1)
+            {
+                intent = Intent.MidCenter;
+            } else if (vector2Int.x == 1 && vector2Int.y == 2)
+            {
+                intent = Intent.MidRight;
+            } else if (vector2Int.x == 2 && vector2Int.y == 0)
+            {
+                intent = Intent.TopLeft;
+            } else if (vector2Int.x == 2 && vector2Int.y == 1)
+            {
+                intent = Intent.TopCenter;
+            } else if (vector2Int.x == 2 && vector2Int.y == 2) {
+                intent = Intent.TopRight;
+            }
+
+            return intent;
+        }
+
+        public List<List<ICell>> GetWorldCells()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetWorldCells(List<List<ICell>> worldCells)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void InitPlayerIntent()
         {
             throw new System.NotImplementedException();
         }

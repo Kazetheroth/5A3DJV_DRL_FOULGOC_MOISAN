@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interfaces
@@ -6,6 +7,7 @@ namespace Interfaces
     public interface IGame
     {
         bool InitGame();
+        IEnumerator StartGame();
         bool UpdateGame();
         bool EndGame();
 

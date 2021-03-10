@@ -18,6 +18,7 @@ public class ControllerEditor : Editor
 
         if (!Application.isPlaying)
         {
+            EditorGUI.BeginChangeCheck();
             controller.parentGeneratedScene = (GameObject) EditorGUILayout.ObjectField("parentGeneratedScene", controller.parentGeneratedScene, typeof(GameObject), true);
 
             controller.wallPrefab = (GameObject) EditorGUILayout.ObjectField("wallPrefab", controller.wallPrefab, typeof(GameObject), false);
@@ -28,8 +29,14 @@ public class ControllerEditor : Editor
             controller.planeBotArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeBotArrowPrefab", controller.planeBotArrowPrefab, typeof(GameObject), false);
             controller.planeTopArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeTopArrowPrefab", controller.planeTopArrowPrefab, typeof(GameObject), false);
             controller.planeLeftArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeLeftArrowPrefab", controller.planeLeftArrowPrefab, typeof(GameObject), false);
-            controller.cellGrid = (GameObject) EditorGUILayout.ObjectField("cellGridPrefab", controller.cellGrid, typeof(GameObject), true);
+            controller.cellGrid = (GameObject) EditorGUILayout.ObjectField("cellGridPrefab", controller.cellGrid, typeof(GameObject), false);
             controller.mainCamera = (GameObject) EditorGUILayout.ObjectField("camera", controller.mainCamera, typeof(GameObject), true);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
+            
             return;
         }
 
@@ -48,11 +55,6 @@ public class ControllerEditor : Editor
             DisplayGridWorldOptions(controller);
         }
 
-        /*if (gameSelected == Controller.GameType.TicTacTard)
-        {
-            DisplayTicTacTard(controller);
-        }*/
-
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space();
         
@@ -62,10 +64,14 @@ public class ControllerEditor : Editor
 
         if (GUILayout.Button("Play TicTacTard"))
         {
-            controller.InitGame(Controller.GameType.TicTacTard);
             gameSelected = Controller.GameType.TicTacTard;
+            controller.InitGame(Controller.GameType.TicTacTard);
         }
-        
+
+        if (gameSelected == Controller.GameType.TicTacTard)
+        {
+            DisplayTicTacTard(controller);
+        }
 
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space();
@@ -135,6 +141,9 @@ public class ControllerEditor : Editor
 
     private void DisplayTicTacTard(Controller controller)
     {
-        
+        if (GUILayout.Button("Démarrer le jeu"))
+        {
+            controller.StartGame();
+        }
     }
 }

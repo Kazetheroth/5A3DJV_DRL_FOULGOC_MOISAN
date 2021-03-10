@@ -53,15 +53,12 @@ namespace Algorithms.MCTS
             set => childs = value;
         }
     }
-    
-    
-    
+
     public class MCTS
     {
         private const int WIN_SCORE = 10;
         private const int MAX_PLAYS = 100;
         
-
         public List<List<ICell>> FindNextMove(List<List<ICell>> grid)
         {
             Tree tree = new Tree(new Node(new TicTacTardState(), null, new List<Node>()));

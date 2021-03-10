@@ -4,11 +4,23 @@ namespace Interfaces
 {
     public enum Intent
     {
+        // TheWORLDO
         Nothing,
         WantToGoRight,
         WantToGoLeft,
         WantToGoTop,
-        WantToGoBot
+        WantToGoBot,
+        
+        // TicTacTard
+        TopLeft,
+        TopCenter,
+        TopRight,
+        MidLeft,
+        MidCenter,
+        MidRight,
+        BotLeft,
+        BotCenter,
+        BotRight
     }
 
     public interface IPlayerIntent

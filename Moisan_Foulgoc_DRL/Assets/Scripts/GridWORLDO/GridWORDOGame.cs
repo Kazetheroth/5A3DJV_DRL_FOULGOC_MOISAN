@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Interfaces;
+using UnityEditorInternal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Vector2Int = Utils.Vector2Int;
@@ -161,10 +163,15 @@ namespace GridWORLDO
 
             return canMove;
         }
-        
+
+        public IEnumerator StartGame()
+        {
+            yield return false;
+        }
+
         public bool UpdateGame()
         {
-            if (!gameStart)
+            while (!gameStart)
             {
                 return false;
             }
@@ -181,7 +188,6 @@ namespace GridWORLDO
             }
 
             Controller.currentPlayerObject.transform.position = new Vector3(player.GetPosition().x, 0, player.GetPosition().y);
-
             return true;
         }
 

@@ -308,7 +308,7 @@ namespace GridWORLDO
                     }
 
                     float temp = gameStateWithAction.gameState.GetValue();
-                    
+
                     float newValue = 0;
 
                     for (int i = 1; i < 5; ++i)
