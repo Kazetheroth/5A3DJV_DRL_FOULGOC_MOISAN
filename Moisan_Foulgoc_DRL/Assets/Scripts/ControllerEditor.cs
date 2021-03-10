@@ -5,7 +5,7 @@ using UnityEngine;
 [CustomEditor(typeof(Controller))]
 public class ControllerEditor : Editor
 {
-    private Controller.GameType gameSelected;
+    public static Controller.GameType gameSelected;
 
     public static bool showStateValue = false;
     public static bool showArrow = false;
@@ -28,6 +28,7 @@ public class ControllerEditor : Editor
             controller.planeBotArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeBotArrowPrefab", controller.planeBotArrowPrefab, typeof(GameObject), false);
             controller.planeTopArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeTopArrowPrefab", controller.planeTopArrowPrefab, typeof(GameObject), false);
             controller.planeLeftArrowPrefab = (GameObject) EditorGUILayout.ObjectField("planeLeftArrowPrefab", controller.planeLeftArrowPrefab, typeof(GameObject), false);
+            controller.cellGrid = (GameObject) EditorGUILayout.ObjectField("cellGridPrefab", controller.cellGrid, typeof(GameObject), true);
             controller.mainCamera = (GameObject) EditorGUILayout.ObjectField("camera", controller.mainCamera, typeof(GameObject), true);
             return;
         }
@@ -47,6 +48,11 @@ public class ControllerEditor : Editor
             DisplayGridWorldOptions(controller);
         }
 
+        /*if (gameSelected == Controller.GameType.TicTacTard)
+        {
+            DisplayTicTacTard(controller);
+        }*/
+
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space();
         
@@ -59,11 +65,7 @@ public class ControllerEditor : Editor
             controller.InitGame(Controller.GameType.TicTacTard);
             gameSelected = Controller.GameType.TicTacTard;
         }
-
-        if (gameSelected == Controller.GameType.TicTacTard)
-        {
-            
-        }
+        
 
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space();
@@ -129,5 +131,10 @@ public class ControllerEditor : Editor
         {
             controller.InitGame(Controller.GameType.GridWORLDO);
         }
+    }
+
+    private void DisplayTicTacTard(Controller controller)
+    {
+        
     }
 }

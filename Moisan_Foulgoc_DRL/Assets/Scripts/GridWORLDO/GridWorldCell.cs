@@ -60,6 +60,11 @@ namespace GridWORLDO
             
         }
 
+        public int GetPlayerId()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public float GetReward()
         {
             return reward;

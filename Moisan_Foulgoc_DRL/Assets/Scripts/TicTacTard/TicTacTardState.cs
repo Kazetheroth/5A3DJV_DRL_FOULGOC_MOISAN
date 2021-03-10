@@ -18,36 +18,6 @@ namespace TicTacTard
         public TicTacTardState()
         {
         }
-        
-        public int CheckVictory()
-        {
-            if (gridBoard[0][0] == gridBoard[0][1] && gridBoard[0][1] == gridBoard[0][2])
-                return gridBoard[0][0].playerId;
-            
-            else if (gridBoard[1][0] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[1][2])
-                return gridBoard[1][0].playerId;
-            
-            else if (gridBoard[2][0] == gridBoard[2][1] && gridBoard[2][1] == gridBoard[2][2])
-                return gridBoard[2][0].playerId;
-
-            else if (gridBoard[0][0] == gridBoard[1][0] && gridBoard[1][0] == gridBoard[2][0])
-                return gridBoard[0][0].playerId;
-            
-            else if (gridBoard[0][1] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][1])
-                return gridBoard[0][1].playerId;
-            
-            else if (gridBoard[0][2] == gridBoard[1][2] && gridBoard[1][2] == gridBoard[2][2])
-                return gridBoard[0][2].playerId;
-
-            else if (gridBoard[0][0] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][2])
-                return gridBoard[0][0].playerId;
-            
-            else if (gridBoard[0][2] == gridBoard[1][1] && gridBoard[1][1] == gridBoard[2][0])
-                return gridBoard[0][2].playerId;
-            
-            else
-                return -1;
-        }
 
         public List<List<TicTacTardGrid>> Grid
         {

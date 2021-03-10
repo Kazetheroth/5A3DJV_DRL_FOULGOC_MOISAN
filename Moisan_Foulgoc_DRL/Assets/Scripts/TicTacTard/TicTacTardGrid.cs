@@ -10,12 +10,25 @@ namespace TicTacTard
         public CellType CellType;
         public int playerId;
         public Vector2Int position;
-        
+        public GameObject gameObject;
+
+        public TicTacTardGrid(Vector2Int position, CellType CellType)
+        {
+            this.position = position;
+            this.CellType = CellType;
+        }
+
         public Vector2Int GetPosition()
         {
             return position;
         }
-        
+
+        public int PlayerId
+        {
+            get => playerId;
+            set => playerId = value;
+        }
+
         public CellType WhenInteract()
         {
             throw new System.NotImplementedException();
@@ -28,7 +41,7 @@ namespace TicTacTard
 
         public CellType GetCellType()
         {
-            throw new System.NotImplementedException();
+            return CellType;
         }
 
         public void SetReward(float reward)
@@ -43,22 +56,27 @@ namespace TicTacTard
 
         Vector2Int ICell.GetPosition()
         {
-            throw new System.NotImplementedException();
+            return position;
         }
 
         public GameObject GetCellGameObject()
         {
-            throw new System.NotImplementedException();
+            return gameObject;
         }
 
         public void SetCellGameObject(GameObject gameObject)
         {
-            throw new System.NotImplementedException();
+            this.gameObject = gameObject;
         }
 
         public void AddMaterialToCell(Material mat)
         {
             throw new System.NotImplementedException();
+        }
+
+        public int GetPlayerId()
+        {
+            return PlayerId;
         }
     }
 }

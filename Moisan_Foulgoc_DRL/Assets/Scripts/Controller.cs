@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GridWORLDO;
 using Interfaces;
+using TicTacTard;
 using TMPro;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class Controller : MonoBehaviour
     [SerializeField] public GameObject planeBotArrowPrefab;
     [SerializeField] public GameObject planeTopArrowPrefab;
     [SerializeField] public GameObject planeLeftArrowPrefab;
+    [SerializeField] public GameObject cellGrid;
     [SerializeField] public GameObject mainCamera;
 
     public bool isHuman = true;
@@ -50,8 +52,8 @@ public class Controller : MonoBehaviour
             case GameType.Soooookolat:
 //                game = new SoooookolatGame();
                 break;
-            case GameType.TicTacTard:
-//                game = new TicTacTardGame();
+            case GameType.TicTacTard: 
+                game = new TicTacTardGame();
                 break;
             case GameType.GridWORLDO:
                 game = new GridWORDOGame();
@@ -143,44 +145,68 @@ public class Controller : MonoBehaviour
     {
         List<List<ICell>> cells = game?.GetCells();
 
+
+        
         if (cells != null)
         {
-            foreach (List<ICell> cellsPerLine in cells)
+            GameObject instantiateGo;
+            if (ControllerEditor.gameSelected == GameType.GridWORLDO)
             {
-                foreach (ICell cell in cellsPerLine)
+                foreach (List<ICell> cellsPerLine in cells)
                 {
-                    GameObject instantiateGo;
-                    Vector3 pos = new Vector3(cell.GetPosition().x, 0, cell.GetPosition().y);
-    
-                    switch (cell.GetCellType())
+                    foreach (ICell cell in cellsPerLine)
                     {
-                        case CellType.Obstacle:
-                            instantiateGo = Instantiate(wallPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = pos;
-                            cell.SetCellGameObject(instantiateGo);
-                            break;
-                        case CellType.Player:
-                            currentPlayerObject = instantiateGo = Instantiate(playerPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = pos;
+                        Vector3 pos = new Vector3(cell.GetPosition().x, 0, cell.GetPosition().y);
+                        switch (cell.GetCellType())
+                        {
+                            case CellType.Obstacle:
+                                instantiateGo = Instantiate(wallPrefab, parentGeneratedScene.transform);
+                                instantiateGo.transform.position = pos;
+                                cell.SetCellGameObject(instantiateGo);
+                                break;
+                            case CellType.Player:
+                                currentPlayerObject = instantiateGo = Instantiate(playerPrefab, parentGeneratedScene.transform);
+                                instantiateGo.transform.position = pos;
 
-                            pos.y -= 0.5f;
-                            instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = pos;
-                            cell.SetCellGameObject(instantiateGo);
-                            break;
-                        case CellType.EndGoal:
-                            instantiateGo = Instantiate(endGoalPrefab, parentGeneratedScene.transform);
-                            instantiateGo.transform.position = pos;
-                            cell.SetCellGameObject(instantiateGo);
-                            break;
-                        case CellType.Empty:
-                            instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
-                            pos.y -= 0.5f;
-                            instantiateGo.transform.position = pos;
-                            cell.SetCellGameObject(instantiateGo);
-                            break;
+                                pos.y -= 0.5f;
+                                instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
+                                instantiateGo.transform.position = pos;
+                                cell.SetCellGameObject(instantiateGo);
+                                break;
+                            case CellType.EndGoal:
+                                instantiateGo = Instantiate(endGoalPrefab, parentGeneratedScene.transform);
+                                instantiateGo.transform.position = pos;
+                                cell.SetCellGameObject(instantiateGo);
+                                break;
+                            case CellType.Empty:
+                                if (ControllerEditor.gameSelected == GameType.GridWORLDO)
+                                {
+                                    instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
+                                    pos.y -= 0.5f;
+                                    instantiateGo.transform.position = pos;
+                                    cell.SetCellGameObject(instantiateGo);
+                                }
+                                break;
+                        }
                     }
                 }
+            }
+            if (ControllerEditor.gameSelected == GameType.TicTacTard)
+            {
+                for (int i = 0; i < 1; i++)
+                {
+                    for (int j = 0; j < 9; j++)
+                    {
+                        var cell = cells[i][j];
+                        Vector3 pos = new Vector3(cell.GetPosition().x, 0, cell.GetPosition().y);
+                        instantiateGo = Instantiate(cellGrid, parentGeneratedScene.transform);
+                        pos.y -= 0.5f;
+                        instantiateGo.transform.position = pos;
+                        instantiateGo.name = $"GRID_{i}_{j}";
+                        cell.SetCellGameObject(instantiateGo);
+                    }
+                }
+                
             }
         }
     }
