@@ -1,4 +1,5 @@
 ﻿using GridWORLDO;
+using TicTacTard;
 using UnityEditor;
 using UnityEngine;
 
@@ -144,9 +145,17 @@ public class ControllerEditor : Editor
 
     private void DisplayTicTacTard(Controller controller)
     {
+        TicTacTardGame.gameType =
+            (TicTacTardGameType) EditorGUILayout.EnumPopup("Vs options", TicTacTardGame.gameType);
+        
         if (GUILayout.Button("Démarrer le jeu"))
         {
             controller.StartGame();
+        }
+
+        if (GUILayout.Button("Simulate test case"))
+        {
+            controller.TicTacTardSimulation();
         }
     }
 }

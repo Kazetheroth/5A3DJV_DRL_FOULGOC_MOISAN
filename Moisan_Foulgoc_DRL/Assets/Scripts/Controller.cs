@@ -51,7 +51,7 @@ public class Controller : MonoBehaviour
     {
         DestroyOldScene();
 
-        Vector3 pos;
+        Vector3 pos = mainCamera.transform.position;
         switch (gameType)
         {
             case GameType.Soooookolat:
@@ -62,10 +62,11 @@ public class Controller : MonoBehaviour
                 break;
             case GameType.TicTacTard: 
                 game = new TicTacTardGame();
+                pos.x = 0;
+                pos.z = 0;
                 break;
             case GameType.GridWORLDO:
                 game = new GridWORDOGame();
-                pos = mainCamera.transform.position;
                 pos.x = GridWORDOGame.MAX_CELLS_PER_LINE / 2;
                 pos.z = GridWORDOGame.MAX_CELLS_PER_COLUMN / 2;
                 mainCamera.transform.position = pos;
@@ -90,6 +91,12 @@ public class Controller : MonoBehaviour
         game?.UpdateGame();
     }
 
+
+    public void TicTacTardSimulation()
+    {
+        (game as TicTacTardGame).SimulateTestCase();
+    }
+    
     public void DestroyOldScene()
     {
         int safeLoopIteration = 0;
@@ -145,7 +152,6 @@ public class Controller : MonoBehaviour
 
     private void ClearDebugObjects()
     {
-        Debug.Log("Alo");
         foreach (GameObject go in debugObjects.ToArray())
         {
             Destroy(go);

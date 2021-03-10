@@ -6,7 +6,6 @@ namespace TicTacTard
 {
     public class TicTacTardCell : ICell
     {
-        public float reward;
         public CellType CellType;
         public int playerId;
         public Vector2Int position;
@@ -18,6 +17,19 @@ namespace TicTacTard
             this.position = position;
             this.CellType = CellType;
             token = "-1";
+        }
+        
+        public TicTacTardCell(TicTacTardCell cell, bool updateDisplay)
+        { 
+            position = cell.position;
+            CellType = cell.CellType;
+            token = cell.token;
+            playerId = cell.playerId;
+
+            if (updateDisplay)
+            {
+                gameObject = cell.GetCellGameObject();
+            }
         }
 
         public Vector2Int GetPosition()

@@ -43,6 +43,25 @@ namespace TicTacTard
             }
         }
 
+        public TicTacTardPlayer(TicTacTardPlayer playerToClone)
+        {
+            id = playerToClone.id;
+            isHuman = playerToClone.isHuman;
+            token = playerToClone.token;
+
+            scores = new Dictionary<Direction, int>();
+
+            for (int i = 0; i < 8; ++i)
+            {
+                scores.Add((Direction) i, 0);
+            }
+
+            foreach (KeyValuePair<Direction, int> score in playerToClone.scores)
+            {
+                scores[score.Key] = score.Value;
+            }
+        }
+
         public void IncrementScore(List<Direction> directions)
         {
             foreach (Direction dir in directions)
@@ -115,7 +134,6 @@ namespace TicTacTard
             
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("Click");
                 RaycastHit hit;
 
                 Ray ray = GameObject.Find("Main Camera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
@@ -140,25 +158,25 @@ namespace TicTacTard
             if (vector2Int.x == 0 && vector2Int.y == 0)
             {
                 intent = Intent.BotLeft;
-            } else if (vector2Int.x == 0 && vector2Int.y == 1)
+            } else if (vector2Int.x == 1 && vector2Int.y == 0)
             {
                 intent = Intent.BotCenter;
-            } else if (vector2Int.x == 0 && vector2Int.y == 2)
+            } else if (vector2Int.x == 2 && vector2Int.y == 0)
             {
                 intent = Intent.BotRight;
-            } else if (vector2Int.x == 1 && vector2Int.y == 0)
+            } else if (vector2Int.x == 0 && vector2Int.y == 1)
             {
                 intent = Intent.MidLeft;
             } else if (vector2Int.x == 1 && vector2Int.y == 1)
             {
                 intent = Intent.MidCenter;
-            } else if (vector2Int.x == 1 && vector2Int.y == 2)
+            } else if (vector2Int.x == 2 && vector2Int.y == 1)
             {
                 intent = Intent.MidRight;
-            } else if (vector2Int.x == 2 && vector2Int.y == 0)
+            } else if (vector2Int.x == 0 && vector2Int.y == 2)
             {
                 intent = Intent.TopLeft;
-            } else if (vector2Int.x == 2 && vector2Int.y == 1)
+            } else if (vector2Int.x == 1 && vector2Int.y == 2)
             {
                 intent = Intent.TopCenter;
             } else if (vector2Int.x == 2 && vector2Int.y == 2) {
@@ -178,9 +196,9 @@ namespace TicTacTard
             throw new System.NotImplementedException();
         }
 
-        public void InitPlayerIntent()
+        public virtual void InitPlayerIntent()
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }
