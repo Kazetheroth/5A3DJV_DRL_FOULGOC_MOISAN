@@ -86,6 +86,7 @@ public class ControllerEditor : Editor
         {
             gameSelected = Controller.GameType.Soooookolat;
             controller.InitGame(Controller.GameType.Soooookolat);
+            controller.StartGame();
         }
 
         if (gameSelected == Controller.GameType.Soooookolat)

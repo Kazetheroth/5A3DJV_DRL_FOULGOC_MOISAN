@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Interfaces;
 using UnityEditorInternal.Profiling.Memory.Experimental;
+using UnityEngine;
 
 namespace Soooookolat
 {
@@ -19,13 +20,24 @@ namespace Soooookolat
         public bool InitGame()
         {
             gameStart = false;
-            cells = new SoooookolatLevels().InitThirdLevel();
+            player = new SooooookolatPlayer();
+            cells = new SoooookolatLevels().InitFirstLevel();
+            foreach (var lineCells in cells)
+            {
+                foreach (var cell in lineCells)
+                {
+                    if (cell.GetCellType() == CellType.Player)
+                    {
+                        player.SetCell(cell);
+                    }
+                }
+            }
             return true;
         }
 
         public IEnumerator StartGame()
         {
-            throw new System.NotImplementedException();
+            yield return false;
         }
 
         public bool UpdateGame()
@@ -34,18 +46,53 @@ namespace Soooookolat
             {
                 return false;
             }
+            bool isMoving = CanMove(
+                GetPlayer(), 
+                GetCells(), 
+                playerIntent.GetPlayerIntent(player.GetPosition().x, player.GetPosition().y), 
+                true);
+            
+            if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
+            {
+                EndGame();
+            }
 
+            Controller.currentPlayerObject.transform.position = new Vector3(player.GetPosition().x, 0, player.GetPosition().y);
             return true;
+        }
+        
+        public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent, bool saveNewPlayerCell = false)
+        {
+            bool canMove = false;
+
+            switch (intent)
+            {
+                case Intent.WantToGoBot:
+                    canMove = player.WantToGoBot(worldCells, saveNewPlayerCell);
+                    break;
+                case Intent.WantToGoLeft:
+                    canMove = player.WantToGoLeft(worldCells, saveNewPlayerCell);
+                    break;
+                case Intent.WantToGoTop:
+                    canMove = player.WantToGoTop(worldCells, saveNewPlayerCell);
+                    break;
+                case Intent.WantToGoRight:
+                    canMove = player.WantToGoRight(worldCells, saveNewPlayerCell);
+                    break;
+            }
+
+            return canMove;
         }
 
         public bool EndGame()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("You won");
+            return true;
         }
 
         public IPlayer GetPlayer()
         {
-            throw new System.NotImplementedException();
+            return player;
         }
 
         public List<List<ICell>> GetCells()
@@ -55,7 +102,18 @@ namespace Soooookolat
 
         public void InitIntent(bool isHuman)
         {
-            throw new System.NotImplementedException();
+            if (isHuman)
+            {
+                playerIntent = new SooooookolatIntent();
+            }
+            else
+            {
+                playerIntent = new SooooookolatAndroidInent();
+            }
+
+            playerIntent.InitPlayerIntent();
+
+            gameStart = true;
         }
     }
 }
