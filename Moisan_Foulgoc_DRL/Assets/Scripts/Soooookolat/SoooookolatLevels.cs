@@ -33,7 +33,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Obstacle),
                                     CellType.Obstacle,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else if (i == 2)
@@ -41,7 +41,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Box),
                                     CellType.Box,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else if(i == 4 || i == 5)
@@ -49,7 +49,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Goal),
                                     CellType.Goal,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else
@@ -57,7 +57,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Empty),
                                     CellType.Empty,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             break;
@@ -67,7 +67,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Obstacle),
                                     CellType.Obstacle,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else if (i == 3)
@@ -76,7 +76,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Box),
                                     CellType.Box,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else
@@ -84,7 +84,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Empty),
                                     CellType.Empty,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             break;
@@ -94,7 +94,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Obstacle),
                                     CellType.Obstacle,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else if (i == 1)
@@ -103,7 +103,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Player),
                                     CellType.Player,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             else
@@ -111,7 +111,7 @@ namespace Soooookolat
                                 cellsPerLine.Add(new SooooookolatCell(
                                     GetRewardFromType(CellType.Empty),
                                     CellType.Empty,
-                                    new Vector2Int(j, i)
+                                    new Vector2Int(i, j)
                                 ));
                             }
                             
@@ -120,7 +120,7 @@ namespace Soooookolat
                             cellsPerLine.Add(new SooooookolatCell(
                                 GetRewardFromType(CellType.Obstacle),
                                 CellType.Obstacle,
-                                new Vector2Int(j, i)
+                                new Vector2Int(i, j)
                             ));
                             break;
                     }

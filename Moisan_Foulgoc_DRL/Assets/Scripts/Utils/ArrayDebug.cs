@@ -8,8 +8,6 @@ namespace Utils
     {
         public static void PrintArray(List<List<ICell>> cells, int x, int y)
         {
-            var test = cells.ToArray();
-            Debug.Log(test[1].Count);
             string arrayPrint = "";
 
             for (int i = 0; i < x; ++i)
@@ -17,7 +15,7 @@ namespace Utils
                 for (int j = 0; j < y; ++j)
                 {
                     Debug.Log(j);
-                    arrayPrint += test[i][j].GetReward() + "\t";
+                    arrayPrint += cells[i][j].GetReward() + "\t";
                 }
 
                 arrayPrint += "\n";

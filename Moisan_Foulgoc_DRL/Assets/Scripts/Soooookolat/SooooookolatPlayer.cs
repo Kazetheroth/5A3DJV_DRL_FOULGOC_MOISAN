@@ -10,12 +10,12 @@ namespace Soooookolat
         
         public bool WantToGoTop(List<List<ICell>> worldCells, bool setNewCell = false)
         {
-            if (worldCells.Count - 1 < (int) CurrentCell.GetPosition().x + 1)
+            if (worldCells[(int) CurrentCell.GetPosition().x].Count - 1 < (int) CurrentCell.GetPosition().y + 1)
             {
                 return false;
             }
 
-            ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x + 1][(int) CurrentCell.GetPosition().y];
+            ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x][(int) CurrentCell.GetPosition().y + 1];
 
             if (cellTest.WhenInteract() != CellType.Obstacle)
             {
@@ -82,12 +82,12 @@ namespace Soooookolat
 
         public bool WantToGoRight(List<List<ICell>> worldCells, bool setNewCell = false)
         {
-            if (worldCells[(int) CurrentCell.GetPosition().x].Count - 1 < (int) CurrentCell.GetPosition().y + 1)
+            if (worldCells.Count - 1 < (int) CurrentCell.GetPosition().x + 1)
             {
                 return false;
             }
 
-            ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x][(int) CurrentCell.GetPosition().y + 1];
+            ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x + 1][(int) CurrentCell.GetPosition().y];
 
             if (cellTest.WhenInteract() != CellType.Obstacle)
             {
