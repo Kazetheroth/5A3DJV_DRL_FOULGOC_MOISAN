@@ -10,8 +10,9 @@ namespace Soooookolat
     {
         private IPlayer player;
         private IPlayerIntent playerIntent;
+        private List<IMovable> boxes;
 
-        private List<List<ICell>> cells;
+        public static List<List<ICell>> cells;
         private bool gameStart;
         
         public static int MAX_CELLS_PER_LINE;
@@ -21,18 +22,39 @@ namespace Soooookolat
         {
             gameStart = false;
             player = new SooooookolatPlayer();
+            boxes = new List<IMovable>();
             cells = new SoooookolatLevels().InitFirstLevel();
             foreach (var lineCells in cells)
             {
                 foreach (var cell in lineCells)
                 {
-                    if (cell.GetCellType() == CellType.Player)
+                    CellType cellType = cell.GetCellType();
+                    if (cellType == CellType.Player)
                     {
                         player.SetCell(cell);
                     }
                 }
             }
+
+            UpdateBoxesPosition();
             return true;
+        }
+
+        private void UpdateBoxesPosition()
+        {
+            foreach (List<ICell> lineCells in cells)
+            {
+                foreach (ICell cell in lineCells)
+                {
+                    CellType cellType = cell.GetCellType();
+                    if (cellType == CellType.Box)
+                    {
+                        SoooookolatMovable newBox = new SoooookolatMovable();
+                        newBox.SetCell(cell);
+                        boxes.Add(newBox);
+                    }
+                }
+            }
         }
 
         public IEnumerator StartGame()
@@ -46,18 +68,30 @@ namespace Soooookolat
             {
                 return false;
             }
+            
             bool isMoving = CanMove(
                 GetPlayer(), 
                 GetCells(), 
                 playerIntent.GetPlayerIntent(player.GetPosition().x, player.GetPosition().y), 
                 true);
+
+            if (isMoving)
+            {
+                Debug.Log("Update Game, player_pos" + player.GetPosition());
+            }
             
             if (isMoving && GetPlayer().GetCell().GetCellType() == CellType.EndGoal)
             {
                 EndGame();
             }
 
+            UpdateBoxesPosition();
             Controller.currentPlayerObject.transform.position = new Vector3(player.GetPosition().x, 0, player.GetPosition().y);
+            for (int i = 0; i < Controller.boxesObjects.Count; i++)
+            {
+                Controller.boxesObjects[i].transform.position =
+                    new Vector3(boxes[i].GetPosition().x, 0, boxes[i].GetPosition().y);
+            }
             return true;
         }
         

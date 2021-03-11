@@ -35,6 +35,7 @@ public class Controller : MonoBehaviour
     public bool isAndroid;
     
     public static GameObject currentPlayerObject;
+    public static List<GameObject> boxesObjects = new List<GameObject>();
     private IGame game;
 
     public static Controller instance;
@@ -190,6 +191,11 @@ public class Controller : MonoBehaviour
                             break;
                         case CellType.Box:
                             instantiateGo = Instantiate(boxPrefab, parentGeneratedScene.transform);
+                            boxesObjects.Add(instantiateGo);
+                            instantiateGo.transform.position = pos;
+                            
+                            pos.y -= 0.5f;
+                            instantiateGo = Instantiate(groundCellPrefab, parentGeneratedScene.transform);
                             instantiateGo.transform.position = pos;
                             cell.SetCellGameObject(instantiateGo);
                             break;

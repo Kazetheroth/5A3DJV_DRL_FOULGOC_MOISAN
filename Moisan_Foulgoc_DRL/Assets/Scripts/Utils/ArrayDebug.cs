@@ -10,12 +10,12 @@ namespace Utils
         {
             string arrayPrint = "";
 
-            for (int i = 0; i < x; ++i)
+            for (int i = y - 1; i >= 0; --i)
             {
-                for (int j = 0; j < y; ++j)
+                for (int j = 0; j < x; ++j)
                 {
-                    Debug.Log(j);
-                    arrayPrint += cells[i][j].GetReward() + "\t";
+                    //Debug.Log(j);
+                    arrayPrint += cells[j][i].GetReward() + "\t";
                 }
 
                 arrayPrint += "\n";

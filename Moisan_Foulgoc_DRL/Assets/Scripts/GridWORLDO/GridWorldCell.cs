@@ -65,6 +65,11 @@ namespace GridWORLDO
             throw new System.NotImplementedException();
         }
 
+        public void SetPostion(Vector2Int position)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public float GetReward()
         {
             return reward;

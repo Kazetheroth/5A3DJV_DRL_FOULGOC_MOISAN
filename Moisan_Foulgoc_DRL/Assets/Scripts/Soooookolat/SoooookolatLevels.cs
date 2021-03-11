@@ -378,7 +378,7 @@ namespace Soooookolat
             SoooookolatGame.MAX_CELLS_PER_LINE = x;
             SoooookolatGame.MAX_CELLS_PER_COLUMN = y;
             
-            List<List<ICell>> secondLevel = new List<List<ICell>>();
+            List<List<ICell>> thirdLevel = new List<List<ICell>>();
             for (int i = 0; i < x; i++)
             {
                 List<ICell> cellsPerLine = new List<ICell>();
@@ -535,15 +535,15 @@ namespace Soooookolat
                             break;
                     }
                 }
-                secondLevel.Add(cellsPerLine);
+                thirdLevel.Add(cellsPerLine);
             }
             
-            ArrayDebug.PrintArray(secondLevel, x, y);
+            ArrayDebug.PrintArray(thirdLevel, x, y);
             
-            return secondLevel;
+            return thirdLevel;
         }
 
-        private float GetRewardFromType(CellType cellType)
+        public static float GetRewardFromType(CellType cellType)
         {
             switch (cellType)
             {
@@ -556,7 +556,7 @@ namespace Soooookolat
                 case CellType.Empty:
                     return -1;
                 case CellType.Player:
-                    return -1000;
+                    return -1;
 
             }
 

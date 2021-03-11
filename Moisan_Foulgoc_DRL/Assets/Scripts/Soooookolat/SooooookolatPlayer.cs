@@ -8,6 +8,7 @@ namespace Soooookolat
     public class SooooookolatPlayer : IPlayer
     {
         public ICell CurrentCell { set; get; }
+        public List<List<ICell>> currentWorld;
         
         public bool WantToGoTop(List<List<ICell>> worldCells, bool setNewCell = false)
         {
@@ -28,13 +29,17 @@ namespace Soooookolat
                     {
                         Debug.Log("Box collider 2");
                         ICell boxTest = worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y + 1];
-                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        if (boxTest.WhenInteract() != CellType.Box && boxTest.WhenInteract() != CellType.Obstacle)
                         {
                             Debug.Log("Box collider 3 ");
+                            ICell emptyCell = new SooooookolatCell(SoooookolatLevels.GetRewardFromType(CellType.Empty), CellType.Empty, cellTest.GetPosition());
                             worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y + 1] = cellTest;
+                            worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y] = emptyCell;
+                            Utils.ArrayDebug.PrintArray(worldCells, worldCells.Count, worldCells[0].Count);
                             if (setNewCell)
                             {
                                 CurrentCell = cellTest;
+                                SoooookolatGame.cells = currentWorld = worldCells;
                             }
                         }
                     }
@@ -74,13 +79,17 @@ namespace Soooookolat
                     {
                         Debug.Log("Box collider 2");
                         ICell boxTest = worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y - 1];
-                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        if (boxTest.WhenInteract() != CellType.Box && boxTest.WhenInteract() != CellType.Obstacle)
                         {
                             Debug.Log("Box collider 3");
+                            ICell emptyCell = new SooooookolatCell(SoooookolatLevels.GetRewardFromType(CellType.Empty), CellType.Empty, cellTest.GetPosition());
                             worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y - 1] = cellTest;
+                            worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y] = emptyCell;
+                            Utils.ArrayDebug.PrintArray(worldCells, worldCells.Count, worldCells[0].Count);
                             if (setNewCell)
                             {
-                                CurrentCell = cellTest;
+                                CurrentCell= cellTest;
+                                SoooookolatGame.cells = currentWorld = worldCells;
                             }
                         }
                     }
@@ -120,13 +129,17 @@ namespace Soooookolat
                     {
                         Debug.Log("Box collider 2");
                         ICell boxTest = worldCells[(int) cellTest.GetPosition().x - 1][(int) cellTest.GetPosition().y];
-                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        if (boxTest.WhenInteract() != CellType.Box && boxTest.WhenInteract() != CellType.Obstacle)
                         {
                             Debug.Log("Box collider 3");
+                            ICell emptyCell = new SooooookolatCell(SoooookolatLevels.GetRewardFromType(CellType.Empty), CellType.Empty, cellTest.GetPosition());
                             worldCells[(int) cellTest.GetPosition().x - 1][(int) cellTest.GetPosition().y] = cellTest;
+                            worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y] = emptyCell;
+                            Utils.ArrayDebug.PrintArray(worldCells, worldCells.Count, worldCells[0].Count);
                             if (setNewCell)
                             {
                                 CurrentCell = cellTest;
+                                SoooookolatGame.cells = currentWorld = worldCells;
                             }
                         }
                     }
@@ -154,7 +167,11 @@ namespace Soooookolat
                 return false;
             }
 
-            ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x + 1][(int) CurrentCell.GetPosition().y];
+            int newX = CurrentCell.GetPosition().x + 1;
+            int newY = CurrentCell.GetPosition().y;
+            ICell cellTest = worldCells[newX][newY];
+
+            Debug.Log($"Cells : {CurrentCell.GetPosition().x} - {newX} - {cellTest.GetPosition().x}");
 
             CellType intractionType = cellTest.WhenInteract();
             if (intractionType != CellType.Obstacle)
@@ -165,29 +182,46 @@ namespace Soooookolat
                     if (worldCells.Count - 1 > (int) cellTest.GetPosition().x + 1)
                     {
                         Debug.Log("Box collider 2");
-                        ICell boxTest = worldCells[(int) cellTest.GetPosition().x + 1][(int) cellTest.GetPosition().y];
-                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        int boxX = newX + 1;
+                        int boxY = newY;
+                        ICell boxTest = worldCells[boxX][boxY];
+                        Debug.Log(boxTest.WhenInteract());
+                        if (boxTest.WhenInteract() != CellType.Box && boxTest.WhenInteract() != CellType.Obstacle)
                         {
                             Debug.Log("Box collider 3");
-                            worldCells[(int) cellTest.GetPosition().x + 1][(int) cellTest.GetPosition().y] = cellTest;
-                            if (setNewCell)
-                            {
-                                CurrentCell = cellTest;
-                            }
+                            ICell emptyCell = new SooooookolatCell(SoooookolatLevels.GetRewardFromType(CellType.Empty), CellType.Empty, cellTest.GetPosition());
+                            worldCells[boxX][boxY] = cellTest;
+                            worldCells[newX][newY] = emptyCell;
+                            Utils.ArrayDebug.PrintArray(SoooookolatGame.cells, worldCells.Count, worldCells[0].Count);
+                        }
+                        else
+                        {
+                            Debug.Log("Current : " + CurrentCell.GetPosition());
+                            Debug.Log("CellTest : " + cellTest.GetPosition());
+                            Debug.Log("BoxTest : " + boxTest.GetPosition());
+                            Utils.ArrayDebug.PrintArray(worldCells, worldCells.Count, worldCells[0].Count);
                         }
                     }
                 }
                 else
                 {
-                    if (setNewCell)
-                    {
-                        CurrentCell = cellTest;
-                    }
+                    Debug.Log(intractionType);
+                    Utils.ArrayDebug.PrintArray(SoooookolatGame.cells, worldCells.Count, worldCells[0].Count);
                 }
             }
             else
             {
+                Debug.Log(intractionType);
+                Utils.ArrayDebug.PrintArray(SoooookolatGame.cells, worldCells.Count, worldCells[0].Count);
                 return false;
+            }
+            if (setNewCell)
+            {
+                Debug.Log("Current : " + CurrentCell.GetPosition());
+                Debug.Log("CellTest : " + cellTest.GetPosition());
+                CurrentCell = cellTest;
+                CurrentCell.SetPostion(cellTest.GetPosition());
+                SoooookolatGame.cells = worldCells;
             }
 
             return true;
@@ -196,6 +230,11 @@ namespace Soooookolat
         public Vector2Int GetPosition()
         {
             return CurrentCell.GetPosition();
+        }
+
+        public List<List<ICell>> GetWoldState()
+        {
+            return currentWorld;
         }
 
         public void SetCell(ICell cell)

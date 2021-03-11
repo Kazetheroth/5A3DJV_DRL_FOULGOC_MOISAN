@@ -43,6 +43,11 @@ namespace Soooookolat
             return position;
         }
 
+        public void SetPostion(Vector2Int position)
+        {
+            this.position = position;
+        }
+
         public GameObject GetCellGameObject()
         {
             return gameObject;

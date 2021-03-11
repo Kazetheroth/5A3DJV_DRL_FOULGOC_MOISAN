@@ -80,5 +80,10 @@ namespace TicTacTard
         {
             return PlayerId;
         }
+
+        public void SetPostion(Vector2Int position)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

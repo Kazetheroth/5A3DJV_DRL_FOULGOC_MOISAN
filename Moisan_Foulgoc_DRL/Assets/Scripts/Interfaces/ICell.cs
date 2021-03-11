@@ -28,5 +28,6 @@ namespace Interfaces
         void SetCellGameObject(GameObject gameObject);
         void AddMaterialToCell(Material mat);
         int GetPlayerId();
+        void SetPostion(Vector2Int position);
     }
 }
