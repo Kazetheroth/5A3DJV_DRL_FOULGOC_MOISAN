@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Interfaces;
-using Utils;
+using UnityEngine;
+using Vector2Int = Utils.Vector2Int;
 
 namespace Soooookolat
 {
@@ -17,11 +18,33 @@ namespace Soooookolat
 
             ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x][(int) CurrentCell.GetPosition().y + 1];
 
-            if (cellTest.WhenInteract() != CellType.Obstacle)
+            CellType intractionType = cellTest.WhenInteract();
+            if (intractionType != CellType.Obstacle)
             {
-                if (setNewCell)
+                if (intractionType == CellType.Box)
                 {
-                    CurrentCell = cellTest;
+                    Debug.Log("Box collider");
+                    if (worldCells[(int) cellTest.GetPosition().x].Count - 1 > (int) cellTest.GetPosition().y + 1)
+                    {
+                        Debug.Log("Box collider 2");
+                        ICell boxTest = worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y + 1];
+                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        {
+                            Debug.Log("Box collider 3 ");
+                            worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y + 1] = cellTest;
+                            if (setNewCell)
+                            {
+                                CurrentCell = cellTest;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (setNewCell)
+                    {
+                        CurrentCell = cellTest;
+                    }
                 }
             }
             else
@@ -41,11 +64,33 @@ namespace Soooookolat
 
             ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x][(int) CurrentCell.GetPosition().y - 1];
 
-            if (cellTest.WhenInteract() != CellType.Obstacle)
+            CellType intractionType = cellTest.WhenInteract();
+            if (intractionType != CellType.Obstacle)
             {
-                if (setNewCell)
+                if (intractionType == CellType.Box)
                 {
-                    CurrentCell = cellTest;
+                    Debug.Log("Box collider " + (cellTest.GetPosition().y - 1));
+                    if (0 <= (int) cellTest.GetPosition().y - 1)
+                    {
+                        Debug.Log("Box collider 2");
+                        ICell boxTest = worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y - 1];
+                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        {
+                            Debug.Log("Box collider 3");
+                            worldCells[(int) cellTest.GetPosition().x][(int) cellTest.GetPosition().y - 1] = cellTest;
+                            if (setNewCell)
+                            {
+                                CurrentCell = cellTest;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (setNewCell)
+                    {
+                        CurrentCell = cellTest;
+                    }
                 }
             }
             else
@@ -65,11 +110,33 @@ namespace Soooookolat
 
             ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x - 1][(int) CurrentCell.GetPosition().y];
 
-            if (cellTest.WhenInteract() != CellType.Obstacle)
+            CellType intractionType = cellTest.WhenInteract();
+            if (intractionType != CellType.Obstacle)
             {
-                if (setNewCell)
+                if (intractionType == CellType.Box)
                 {
-                    CurrentCell = cellTest;
+                    Debug.Log("Box collider");
+                    if (0 <= (int) cellTest.GetPosition().x - 1)
+                    {
+                        Debug.Log("Box collider 2");
+                        ICell boxTest = worldCells[(int) cellTest.GetPosition().x - 1][(int) cellTest.GetPosition().y];
+                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        {
+                            Debug.Log("Box collider 3");
+                            worldCells[(int) cellTest.GetPosition().x - 1][(int) cellTest.GetPosition().y] = cellTest;
+                            if (setNewCell)
+                            {
+                                CurrentCell = cellTest;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (setNewCell)
+                    {
+                        CurrentCell = cellTest;
+                    }
                 }
             }
             else
@@ -89,11 +156,33 @@ namespace Soooookolat
 
             ICell cellTest = worldCells[(int) CurrentCell.GetPosition().x + 1][(int) CurrentCell.GetPosition().y];
 
-            if (cellTest.WhenInteract() != CellType.Obstacle)
+            CellType intractionType = cellTest.WhenInteract();
+            if (intractionType != CellType.Obstacle)
             {
-                if (setNewCell)
+                if (intractionType == CellType.Box)
                 {
-                    CurrentCell = cellTest;
+                    Debug.Log("Box collider");
+                    if (worldCells.Count - 1 > (int) cellTest.GetPosition().x + 1)
+                    {
+                        Debug.Log("Box collider 2");
+                        ICell boxTest = worldCells[(int) cellTest.GetPosition().x + 1][(int) cellTest.GetPosition().y];
+                        if (boxTest.WhenInteract() != CellType.Box || boxTest.WhenInteract() != CellType.Obstacle)
+                        {
+                            Debug.Log("Box collider 3");
+                            worldCells[(int) cellTest.GetPosition().x + 1][(int) cellTest.GetPosition().y] = cellTest;
+                            if (setNewCell)
+                            {
+                                CurrentCell = cellTest;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (setNewCell)
+                    {
+                        CurrentCell = cellTest;
+                    }
                 }
             }
             else
