@@ -33,9 +33,6 @@ namespace TicTacTard
 
         public int nbActionPlayed;
 
-        public TicTacTardPlayer player1;
-        public TicTacTardPlayer player2;
-
         public TicTacTardState()
         {
             visits = 0;
@@ -46,12 +43,8 @@ namespace TicTacTard
         public TicTacTardState(TicTacTardState state)
         {
             visits = state.visits;
-            Debug.Log("COPY WIN SCORE " + state.winScore);
             winScore = state.winScore;
             nbActionPlayed = state.nbActionPlayed;
-
-            player1 = state.player1;
-            player2 = state.player2;
 
             List<List<ICell>> oldGridBoard = state.Grid;
             gridBoard = new List<List<ICell>>();
@@ -71,9 +64,6 @@ namespace TicTacTard
         {
             visits = state.visits;
             winScore = state.winScore;
-
-            player1 = state.player1;
-            player2 = state.player2;
 
             List<List<ICell>> oldGridBoard = state.Grid;
             gridBoard = new List<List<ICell>>();

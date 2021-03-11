@@ -14,5 +14,7 @@ namespace Interfaces
         IPlayer GetPlayer();
         List<List<ICell>> GetCells();
         void InitIntent(bool isHuman);
+
+        bool IsInit();
     }
 }

@@ -30,6 +30,7 @@ namespace GridWORLDO
         public int yGoal;
 
         private bool gameStart;
+        public bool isInit = false;
 
         public bool InitGame()
         {
@@ -75,6 +76,8 @@ namespace GridWORLDO
 
             SetInitialReward(xGoal, yGoal);
             PrintArray();
+
+            isInit = true;
 
             return true;
         }
@@ -127,6 +130,7 @@ namespace GridWORLDO
 
         public void InitIntent(bool isHuman)
         {
+            isInit = false;
             if (isHuman)
             {
                 playerIntent = new GridWorldIntent();
@@ -139,6 +143,11 @@ namespace GridWORLDO
             playerIntent.InitPlayerIntent();
 
             gameStart = true;
+        }
+
+        public bool IsInit()
+        {
+            return isInit;
         }
 
         public static bool CanMove(IPlayer player, List<List<ICell>> worldCells, Intent intent, bool saveNewPlayerCell = false)

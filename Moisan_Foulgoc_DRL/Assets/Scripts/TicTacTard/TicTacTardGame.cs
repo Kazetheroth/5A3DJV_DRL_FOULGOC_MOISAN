@@ -32,10 +32,16 @@ namespace TicTacTard
 
         public static TicTacTardState currentState;
 
+        private bool isInit = false; 
+
         public bool InitGame()
         {
+            if (player == null)
+            {
+                player = new List<IPlayer>();
+            }
+
             gameStart = false;
-            player = new List<IPlayer>();
 
             List<List<ICell>> cellsGame = new List<List<ICell>>();
 
@@ -53,7 +59,13 @@ namespace TicTacTard
 
             currentState = new TicTacTardState();
             currentState.SetCells(cellsGame);
+            isInit = true;
             return true;
+        }
+
+        public bool IsInit()
+        {
+            return isInit;
         }
 
         public bool UpdateGame()
@@ -90,6 +102,7 @@ namespace TicTacTard
                 if (newState != null)
                 {
                     currentState = newState;
+                    Debug.Log(newState.nbActionPlayed + " " + (player[0] as TicTacTardPlayer).playerWon + " " + (player[1] as TicTacTardPlayer).playerWon);
  
                     if ((playerWon = currentPlayer.playerWon) || currentState.nbActionPlayed == 9)
                     {
@@ -166,11 +179,22 @@ namespace TicTacTard
             int x = 0;
             int y = 0;
             int safeLoopIteration = 0;
-            
-            while (!foundPossibleMove && safeLoopIteration < 50)
+
+            List<Intent> testedIntent = new List<Intent>();
+
+            while (!foundPossibleMove && safeLoopIteration < 50 && state.nbActionPlayed != 9)
             {
                 ++safeLoopIteration;
                 intent = (Intent) Random.Range(5, 14);
+
+                if (testedIntent.Contains(intent))
+                {
+                    continue;
+                }
+                else
+                {
+                    testedIntent.Add(intent);
+                }
 
                 if (CanPlayIntent(state, intent))
                 {
@@ -180,7 +204,12 @@ namespace TicTacTard
                 if (safeLoopIteration >= 50)
                 {
                     state.DisplayGrid();
-                    Debug.LogError("SafeLoopIteration triggered : Exit Get random intent");
+                    Debug.LogError("SafeLoopIteration triggered : Exit Get random intent ");
+                }
+
+                if (testedIntent.Count == 9)
+                {
+                    break;
                 }
             }
 
@@ -286,6 +315,8 @@ namespace TicTacTard
 
         public bool EndGame()
         {
+            gameStart = false;
+
             if (playerWon)
             {
                 Debug.Log("Player with " + currentPlayer.Token + " won ");
@@ -310,38 +341,52 @@ namespace TicTacTard
 
         public void InitIntent(bool isHuman)
         {
-            switch (gameType)
+            isInit = false;
+            
+            if (player.Count == 0)
             {
-                case TicTacTardGameType.HumanVHuman:
-                    for (int i = 0; i < 2; i++)
-                    {
-                        player.Add(new TicTacTardPlayer(i, i.ToString()));
-                    }
-                    currentState.player1 = player[0] as TicTacTardPlayer;
-                    currentState.player2 = player[1] as TicTacTardPlayer;
-                    break;
-                case TicTacTardGameType.HumanVBot:
-                    player.Add(new TicTacTardAndroid(0, "0"));
-                    player.Add(new TicTacTardPlayer(1, "1"));
+                switch (gameType)
+                {
+                    case TicTacTardGameType.HumanVHuman:
+                        for (int i = 0; i < 2; i++)
+                        {
+                            player.Add(new TicTacTardPlayer(i, i.ToString()));
+                        }
+                        break;
+                    case TicTacTardGameType.HumanVBot:
+                        player.Add(new TicTacTardAndroid(0, "0"));
+                        player.Add(new TicTacTardPlayer(1, "1"));
 
-                    currentState.player1 = player[0] as TicTacTardPlayer;
-                    currentState.player2 = player[1] as TicTacTardPlayer;
+                        TicTacTardStateWithAction currentStateWithAction =
+                            new TicTacTardStateWithAction(currentState, GetRandomPossibleMove(currentState));
 
-                    TicTacTardStateWithAction currentStateWithAction =
-                        new TicTacTardStateWithAction(currentState, GetRandomPossibleMove(currentState));
-                    (player[0] as TicTacTardAndroid).ComputeInitIntent(currentStateWithAction, true, true);
+                        int safeLoopIteration = 0;
+                        bool policyIsStable = false;
 
-                    break;
-                case TicTacTardGameType.BotVBot:
-                    for (int i = 0; i < 2; i++)
-                    {
-                        player.Add(new TicTacTardAndroid(i, i.ToString()));
-                    }
-                    currentState.player1 = player[0] as TicTacTardPlayer;
-                    currentState.player2 = player[1] as TicTacTardPlayer;
-                    break;
+                        while (!policyIsStable && safeLoopIteration < 100)
+                        {
+                            ++safeLoopIteration;
+                            policyIsStable = (player[0] as TicTacTardAndroid).ComputeInitIntent(currentStateWithAction, true, true);
+                        }
+
+                        if (safeLoopIteration >= 100)
+                        {
+                            Debug.LogError("safeLoopIteration trigger : ExitComputeIntent");
+                        }
+                    
+                        Debug.Log("Bot generate " + (player[0] as TicTacTardAndroid).ticTacTardStateWithActions.Count + " states");
+                        break;
+                    case TicTacTardGameType.BotVBot:
+                        for (int i = 0; i < 2; i++)
+                        {
+                            player.Add(new TicTacTardAndroid(i, i.ToString()));
+                        }
+                        break;
+                }
             }
 
+            ((TicTacTardPlayer) player[0]).ResetScore();
+            ((TicTacTardPlayer) player[1]).ResetScore();
             currentPlayer = (TicTacTardPlayer)player[0];
         }
 
@@ -366,8 +411,6 @@ namespace TicTacTard
 
             currentState = new TicTacTardState();
             currentState.Grid = cellsGame;
-            currentState.player1 = bot;
-            currentState.player2 = fakePlayer;
 
             currentState = PlayAction(currentState, bot, Intent.BotLeft, false);
             currentState = PlayAction(currentState, fakePlayer, Intent.MidCenter, false);

@@ -49,8 +49,6 @@ public class Controller : MonoBehaviour
 
     public void InitGame(GameType gameType)
     {
-        DestroyOldScene();
-
         Vector3 pos = mainCamera.transform.position;
         switch (gameType)
         {
@@ -74,12 +72,27 @@ public class Controller : MonoBehaviour
         }
 
         debugObjects = new List<GameObject>();
+        
+        Debug.Log(game);
+        GenerateSceneAfterInitGame();
+    }
+
+    public void GenerateSceneAfterInitGame()
+    {
+        DestroyOldScene();
+        
+        Debug.Log(game);
         game?.InitGame();
         GenerateScene();
     }
 
     public void StartGame()
     {
+        if (!game.IsInit())
+        {
+            GenerateSceneAfterInitGame();
+        }
+        
         ClearDebugObjects();
         game.InitIntent(isHuman);
 
@@ -90,7 +103,6 @@ public class Controller : MonoBehaviour
     {
         game?.UpdateGame();
     }
-
 
     public void TicTacTardSimulation()
     {
@@ -105,8 +117,6 @@ public class Controller : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-
-        game = null;
     }
     
     public static void InstantiateArrowByIntent(Intent intent, int x, int y, float stateValue)

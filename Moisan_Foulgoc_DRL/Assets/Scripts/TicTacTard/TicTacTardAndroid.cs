@@ -9,7 +9,7 @@ namespace TicTacTard
     {
         public List<TicTacTardStateWithAction> ticTacTardStateWithActions;
 
-        private int nbEpisode = 5;
+        private int nbEpisode = 20;
         
         public TicTacTardAndroid(int id, string token) : base(id, token)
         {
@@ -23,31 +23,11 @@ namespace TicTacTard
 
             Intent intent = TicTacTardGame.GetRandomPossibleMove(state);
 
-            int i = 0;
-            foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
-            {
-                i++;
-                if (action.IsSameState(state))
-                {
-                    action.DisplayGrid();
-                    state.DisplayGrid();
-                    Debug.Log("Found with " + i + " iteration " + action.intent);
-                }
-                
-                if (action.IsSameState(state) && TicTacTardGame.CanPlayIntent(state, action.intent))
-                {
-                    intent = action.intent;
-                    break;
-                }
-            }
-
-            ComputeInitIntent(new TicTacTardStateWithAction(state, intent), true, false);
-            
             foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
             {
                 if (action.IsSameState(state) && TicTacTardGame.CanPlayIntent(state, action.intent))
                 {
-                    Debug.Log("Use generated state");
+                    Debug.Log("Found intent !");
                     intent = action.intent;
                     break;
                 }
@@ -56,10 +36,11 @@ namespace TicTacTard
             return intent;
         }
 
-        public void SimulateEpisode(TicTacTardStateWithAction state, bool isFirstVisit, bool offPolicy)
+        public bool SimulateEpisode(TicTacTardStateWithAction state, bool isFirstVisit, bool offPolicy)
         {
             bool foundSameState = false;
-            
+            bool isStable = true;
+
             foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
             {
                 action.WinScore = 0;
@@ -84,7 +65,7 @@ namespace TicTacTard
                 {
                     TicTacTardStateWithAction currentState = episode.EpisodeStates[t];
                     
-                    Debug.Log("reward " + episode.EpisodeStates[t + 1].reward + " g " + g + " winScore " + currentState.WinScore);
+                    // Debug.Log("reward " + episode.EpisodeStates[t + 1].reward + " g " + g + " winScore " + currentState.WinScore);
                     g = g + episode.EpisodeStates[t + 1].reward;
                     bool foundSameStateInEpisode = episode.FoundSameStateUntilIndex(t - 1, currentState);
 
@@ -92,10 +73,6 @@ namespace TicTacTard
                     {
                         currentState.WinScore = currentState.WinScore + g;
                         currentState.Visits += 1;
-
-                        Debug.Log("For t = " + t);
-                        Debug.Log(currentState.WinScore);
-                        Debug.Log(currentState.Visits);
                     }
                 }
 
@@ -106,35 +83,25 @@ namespace TicTacTard
                         action.value = action.WinScore / action.Visits;
                     }
 
-                    // foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
-                    // {
-                    //     Intent intent = GetBestIntent(action);
-                    //
-                    //     if (intent != Intent.Nothing && intent != action.intent)
-                    //     {
-                    //         action.intent = intent;
-                    //     }
-                    // }
+                    foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
+                    {
+                        Intent intent = GetBestIntent(action);
+                    
+                        if (intent != Intent.Nothing && intent != action.intent)
+                        {
+                            action.intent = intent;
+                            isStable = false;
+                        }
+                    }
                 }
-                
-                // foreach (TicTacTardStateWithAction action in ticTacTardStateWithActions)
-                // {
-                //     Debug.Log("For this case ");
-                //     action.DisplayGrid();
-                //     Debug.Log("Play : " + action.intent);
-                // }
             }
+            
+            return isStable;
         }
 
-        public void ComputeInitIntent(TicTacTardStateWithAction state, bool isFirstVisit, bool offPolicy)
+        public bool ComputeInitIntent(TicTacTardStateWithAction state, bool isFirstVisit, bool offPolicy)
         {
-            bool needToRerun = false;
-            
-            Debug.Log("Initial state");
-            state.DisplayGrid();
-            Debug.Log("Random input : " + state.intent);
-
-            SimulateEpisode(state, isFirstVisit, offPolicy);
+            bool isStable = SimulateEpisode(state, isFirstVisit, offPolicy);
 
             if (offPolicy)
             {
@@ -143,24 +110,54 @@ namespace TicTacTard
                     action.value = action.WinScore / action.Visits;
                 }
                 
-                // for (int i = 0; i < ticTacTardStateWithActions.Count; ++i)
-                // {
-                //     Intent intent = GetBestIntent(ticTacTardStateWithActions[i]);
-                //
-                //     if (intent != Intent.Nothing && intent != ticTacTardStateWithActions[i].intent)
-                //     {
-                //         ticTacTardStateWithActions[i].intent = intent;
-                //     }
-                // }
+                for (int i = 0; i < ticTacTardStateWithActions.Count; ++i)
+                {
+                    Intent intent = GetBestIntent(ticTacTardStateWithActions[i]);
+                
+                    if (intent != Intent.Nothing && intent != ticTacTardStateWithActions[i].intent)
+                    {
+                        ticTacTardStateWithActions[i].intent = intent;
+                        isStable = false;
+                    }
+                }
             }
+
+            return isStable;
+        }
+
+        private Intent EpsilonGreedy(TicTacTardStateWithAction state)
+        {
+            int rand = Random.Range(0, 10);
+            Intent intent;
+
+            if (state.nbActionPlayed == 9)
+            {
+                return state.intent;
+            }
+
+            if (rand < 5)
+            {
+                intent = state.intent;
+            }
+            else
+            {
+                do
+                {
+                    intent = TicTacTardGame.GetRandomPossibleMove(state);
+                } while (intent == Intent.Nothing);
+            }
+
+            return intent;
         }
 
         private TicTacEpisode GenerateEpisodeFromState(TicTacTardStateWithAction state)
         {
             TicTacEpisode episode = new TicTacEpisode();
 
-            TicTacTardPlayer fakeOpponent1 = new TicTacTardPlayer(state.player1);
-            TicTacTardPlayer fakeOpponent2 = new TicTacTardPlayer(state.player2);
+            Intent initialIntent = EpsilonGreedy(state);
+
+            TicTacTardPlayer fakeOpponent1 = new TicTacTardPlayer(0, "0");
+            TicTacTardPlayer fakeOpponent2 = new TicTacTardPlayer(1, "1");
             TicTacTardPlayer currentPlayer = fakeOpponent1;
             string tokenCurrentPlayer = Token;
 
@@ -170,11 +167,6 @@ namespace TicTacTard
             currentState.Visits = 0;
 
             int safeLoopIteration = 0;
-            
-            // state.DisplayGrid();
-            // Debug.Log(state.nbActionPlayed);
-            // Debug.Log(state.player1.scores[Direction.Column1]);
-            // Debug.Log(state.player1.scores[Direction.Column1]);
 
             while (currentState.nbActionPlayed < 9 && !fakeOpponent1.playerWon && !fakeOpponent2.playerWon && safeLoopIteration < 200)
             {
@@ -184,11 +176,11 @@ namespace TicTacTard
                 if (tokenCurrentPlayer == Token)
                 {
                     newState =
-                        TicTacTardGame.PlayAction(currentState, currentPlayer, currentState.intent, false);
+                        TicTacTardGame.PlayAction(currentState, currentPlayer, initialIntent, false);
 
                     if (newState == null)
                     {
-                        currentState.intent = TicTacTardGame.GetRandomPossibleMove(currentState);
+                        initialIntent = TicTacTardGame.GetRandomPossibleMove(currentState);
                         continue;
                     }
                 }
@@ -212,13 +204,13 @@ namespace TicTacTard
 
                     initNewState.prevState = currentState;
                     currentState = initNewState;
+                    initialIntent = currentState.intent;
                     ticTacTardStateWithActions.Add(currentState);
                 }
                 else
                 {
-                    Debug.Log("Existing State");
-                    existingState.DisplayGrid();
                     currentState = existingState;
+                    initialIntent = currentState.intent;
                 }
 
                 episode.EpisodeStates.Add(currentState);
@@ -234,27 +226,12 @@ namespace TicTacTard
 
             if (fakeOpponent1.playerWon)
             {
-                currentState.reward = 1000;
-            } else if (fakeOpponent2.playerWon)
-            {
-                currentState.reward = -1000;
+                currentState.reward = 1;
             }
             else
             {
                 currentState.reward = 0;
             }
-            
-            // Debug.Log("Episode generate : ");
-            // int i = 1;
-            // foreach (TicTacTardStateWithAction action in episode.EpisodeStates)
-            // {
-            //     Debug.Log("Step "+ i++ + " : ");
-            //     action.DisplayGrid();
-            // }
-
-            TicTacTardStateWithAction lastAction = episode.EpisodeStates[episode.EpisodeStates.Count - 1];
-            lastAction.DisplayGrid();
-            Debug.Log(lastAction.reward + " 1 : " + lastAction.player1.playerWon + " 2 : " + lastAction.player2.playerWon);
 
             return episode;
         }
@@ -262,9 +239,9 @@ namespace TicTacTard
         private Intent GetBestIntent(TicTacTardStateWithAction action)
         {
             float maxValue = -1;
-            Intent intent = Intent.Nothing;
+            Intent intent = action.intent;
 
-            TicTacTardAndroid bot = new TicTacTardAndroid(10, "0");
+            TicTacTardPlayer fakePlayer = new TicTacTardPlayer(2, "1");
 
             for (int i = 5; i < 14; ++i)
             {
@@ -272,64 +249,15 @@ namespace TicTacTard
 
                 if (TicTacTardGame.CanPlayIntent(action, tempIntent))
                 {
-                    TicTacTardState nextState = TicTacTardGame.PlayAction(action, action.player2, tempIntent, false);
+                    TicTacTardState nextState = TicTacTardGame.PlayAction(action, fakePlayer, tempIntent, false);
 
-                    for (int j = 5; j < 14; ++j)
+                    TicTacTardState calculatedState = ticTacTardStateWithActions.Find(state => state.IsSameState(nextState));
+
+                    if (calculatedState != null && calculatedState.value > maxValue)
                     {
-                        Intent intentMadeByBot = (Intent) j;
-
-                        if (TicTacTardGame.CanPlayIntent(nextState, intentMadeByBot))
-                        {
-                            TicTacTardState statePlayedByBot =
-                                TicTacTardGame.PlayAction(nextState, action.player1, intentMadeByBot, false);
-
-                            TicTacTardState calculatedState = ticTacTardStateWithActions.Find(state => state.IsSameState(statePlayedByBot));
-
-                            if (calculatedState == null)
-                            {
-                                TicTacTardStateWithAction nextStateAction =
-                                    new TicTacTardStateWithAction(nextState, intentMadeByBot);
-
-                                SimulateEpisode(nextStateAction, true, true);
-                            }
-
-                            calculatedState = ticTacTardStateWithActions.Find(state => state.IsSameState(statePlayedByBot));
-                            
-                            if (calculatedState == null)
-                            {
-                                Debug.LogError("Nice error ");
-                            }
-
-                            if (calculatedState != null && calculatedState.value > maxValue)
-                            {
-                                maxValue = calculatedState.value;
-                                intent = tempIntent;
-                            }
-                        }
+                        maxValue = calculatedState.value;
+                        intent = tempIntent;
                     }
-
-                    // TicTacTardState nextState = TicTacTardGame.PlayAction(action, action.player1, tempIntent, false);
-                    //
-                    // TicTacTardState calculatedState = ticTacTardStateWithActions.Find(state => state.IsSameState(nextState));
-                    //
-                    //
-                    // Intent randIntent = TicTacTardGame.GetRandomPossibleMove(nextState);
-                    // TicTacTardStateWithAction emptyStateAction = new TicTacTardStateWithAction(nextState, randIntent);
-                    //
-                    // SimulateEpisode(emptyStateAction, false, true);
-                    //
-                    // calculatedState = ticTacTardStateWithActions.Find(state => state.IsSameState(nextState));
-                    //
-                    // if (calculatedState == null)
-                    // {
-                    //     Debug.LogError("Nice error ");
-                    // }
-                    //
-                    // if (calculatedState != null && calculatedState.value > maxValue)
-                    // {
-                    //     maxValue = calculatedState.value;
-                    //     intent = tempIntent;
-                    // }
                 }
             }
 

@@ -147,8 +147,10 @@ public class ControllerEditor : Editor
     {
         TicTacTardGame.gameType =
             (TicTacTardGameType) EditorGUILayout.EnumPopup("Vs options", TicTacTardGame.gameType);
-        
-        if (GUILayout.Button("Démarrer le jeu"))
+
+        string label = "Démarrer le jeu";
+
+        if (GUILayout.Button(label))
         {
             controller.StartGame();
         }

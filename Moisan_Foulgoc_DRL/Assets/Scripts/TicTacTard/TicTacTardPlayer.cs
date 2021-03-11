@@ -62,6 +62,15 @@ namespace TicTacTard
             }
         }
 
+        public void ResetScore()
+        {
+            playerWon = false;
+            for (int i = 0; i < 8; ++i)
+            {
+                scores[(Direction) i] = 0;
+            }
+        }
+
         public void IncrementScore(List<Direction> directions)
         {
             foreach (Direction dir in directions)
