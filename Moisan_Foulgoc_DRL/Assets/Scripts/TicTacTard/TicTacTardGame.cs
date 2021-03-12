@@ -389,38 +389,5 @@ namespace TicTacTard
             ((TicTacTardPlayer) player[1]).ResetScore();
             currentPlayer = (TicTacTardPlayer)player[0];
         }
-
-        public void SimulateTestCase()
-        {
-            List<List<ICell>> cellsGame = new List<List<ICell>>();
-
-            for (int i = 0; i < MAX_CELLS_PER_LINE; i++)
-            {
-                List<ICell> cellsPerLine = new List<ICell>();
-
-                for (int j = 0; j < MAX_CELLS_PER_COLUMN; j++)
-                {
-                    cellsPerLine.Add(new TicTacTardCell(new Vector2Int(i, j), CellType.Empty));
-                }
-
-                cellsGame.Add(cellsPerLine);
-            }
-
-            TicTacTardAndroid bot = new TicTacTardAndroid(1, "0");
-            TicTacTardPlayer fakePlayer = new TicTacTardPlayer(2, "1");
-
-            currentState = new TicTacTardState();
-            currentState.Grid = cellsGame;
-
-            currentState = PlayAction(currentState, bot, Intent.BotLeft, false);
-            currentState = PlayAction(currentState, fakePlayer, Intent.MidCenter, false);
-            currentState = PlayAction(currentState, bot, Intent.BotCenter, false);
-            currentState = PlayAction(currentState, fakePlayer, Intent.TopLeft, false);
-
-            TicTacTardStateWithAction stateWithAction =
-                new TicTacTardStateWithAction(currentState, GetRandomPossibleMove(currentState));
-            
-            bot.ComputeInitIntent(stateWithAction, true, true);
-        }
     }
 }

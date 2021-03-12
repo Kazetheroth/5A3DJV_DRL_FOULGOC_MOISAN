@@ -470,12 +470,15 @@ MonoBehaviour:
   parentGeneratedScene: {fileID: 1533532137}
   wallPrefab: {fileID: 6370122714011703381, guid: 0b8dd6495799d404cb5b2cb18e71493e, type: 3}
   playerPrefab: {fileID: 8011840473678907026, guid: 9150978ad00fea04d909c6dece595265, type: 3}
+  boxPrefab: {fileID: 6370122714011703381, guid: 2498d9152ce6dda4bb1e30422fd5d8ca, type: 3}
+  goalPrefab: {fileID: 6344724874838344549, guid: 84540b4e127ad234bbf686b277f5819a, type: 3}
   endGoalPrefab: {fileID: 6344724874838344549, guid: 909a39938d2907b4589904ec1e1e5867, type: 3}
   groundCellPrefab: {fileID: 7403879162156382192, guid: e13d6cc070143ce44b52107cce32e822, type: 3}
   planeRightArrowPrefab: {fileID: 4879949488115707802, guid: 21ed4c9e3c183654c9d90ae309453ba9, type: 3}
   planeBotArrowPrefab: {fileID: 3181079337335799284, guid: 264c9209ccef8344a91751724a0ae493, type: 3}
   planeTopArrowPrefab: {fileID: 378317784840944779, guid: e4203bf312c31b54aa6e7e5037a3a484, type: 3}
   planeLeftArrowPrefab: {fileID: 5524592582720978234, guid: d8a02daca7509d24d868eb7f3017a5b5, type: 3}
+  cellGrid: {fileID: 3181079337335799284, guid: 18ce5868d2a8cab458865fd620b2d4f0, type: 3}
   mainCamera: {fileID: 536458847}
   isHuman: 1
   isAndroid: 0

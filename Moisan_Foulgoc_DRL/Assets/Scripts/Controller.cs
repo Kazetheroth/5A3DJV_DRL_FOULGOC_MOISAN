@@ -31,8 +31,8 @@ public class Controller : MonoBehaviour
     [SerializeField] public GameObject cellGrid;
     [SerializeField] public GameObject mainCamera;
 
-    public bool isHuman = true;
-    public bool isAndroid;
+    [HideInInspector]public bool isHuman = true;
+    [HideInInspector]public bool isAndroid;
     
     public static GameObject currentPlayerObject;
     public static List<GameObject> boxesObjects = new List<GameObject>();
@@ -62,6 +62,7 @@ public class Controller : MonoBehaviour
                 game = new TicTacTardGame();
                 pos.x = 0;
                 pos.z = 0;
+                mainCamera.transform.position = pos;
                 break;
             case GameType.GridWORLDO:
                 game = new GridWORDOGame();
@@ -104,11 +105,6 @@ public class Controller : MonoBehaviour
         game?.UpdateGame();
     }
 
-    public void TicTacTardSimulation()
-    {
-        (game as TicTacTardGame).SimulateTestCase();
-    }
-    
     public void DestroyOldScene()
     {
         int safeLoopIteration = 0;

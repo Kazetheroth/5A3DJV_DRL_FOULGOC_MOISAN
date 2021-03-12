@@ -149,5 +149,10 @@ namespace Soooookolat
 
             gameStart = true;
         }
+
+        public bool IsInit()
+        {
+            return true;
+        }
     }
 }

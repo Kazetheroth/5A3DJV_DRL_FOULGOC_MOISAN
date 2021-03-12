@@ -193,16 +193,9 @@ namespace GridWORLDO
                     float temp = gameStateWithAction.gameState.GetValue();
                     float newValue = 0;
 
-                    // foreach (KeyValuePair<Intent, float> intentProb in gameStateWithAction.intentProbability)
-                    // {
-                        IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, gameStateWithAction.intent);
-                        float nextReward = worldCells[nextGameState.GetPos().x][nextGameState.GetPos().y].GetReward();
-                        // float nextReward = GetReward(nextGameState.GetPos().x, nextGameState.GetPos().y);
-
-                        Debug.Log("In "+ gameStateWithAction.gameState.GetPos() + " For future (" + gameStateWithAction.intent + ") " + nextGameState.GetPos() + " " +
-                                  " reward is " + nextReward + " stateValue " + nextGameState.GetValue());
-                        newValue += 1 * (nextReward + gamma * nextGameState.GetValue());
-                    // }
+                    IGameState nextGameState = gameStateWithAction.GetNextState(gameStates, gameStateWithAction.intent);
+                    float nextReward = worldCells[nextGameState.GetPos().x][nextGameState.GetPos().y].GetReward();
+                    newValue += 1 * (nextReward + gamma * nextGameState.GetValue());
 
                     gameStateWithAction.gameState.SetValue(newValue);
                     delta = Math.Max(delta, Math.Abs(temp - gameStateWithAction.gameState.GetValue()));
